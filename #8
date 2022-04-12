@@ -10,9 +10,9 @@ namespace _7
             int waitingTime = 10;
             int peoples = Convert.ToInt32(Console.ReadLine()) * waitingTime;
             int minuteInHour = 60;
-            int hours = peoples / minuteInHour;
-            int minuts = peoples % minuteInHour;
-            Console.WriteLine("Вам нужно прождать {0} часов и {1} минут.", hours, minuts);
+            int waitingHours = peoples / minuteInHour;
+            int waitingMinuts = peoples % minuteInHour;
+            Console.WriteLine("Вам нужно прождать {0} часов и {1} минут.", waitingHours, waitingMinuts);
         }
     }
 }
