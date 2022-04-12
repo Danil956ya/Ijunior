@@ -10,7 +10,7 @@ namespace №2
             int age;
             float height;
             byte weight;
-            sbyte childCount;
+            sbyte childs;
             short fines;
             ushort finesPaid;
             long passportSeries;
