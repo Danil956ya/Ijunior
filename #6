@@ -8,9 +8,9 @@ namespace _5
         {
             int picture = 52;
             int pictureInLine = 3;
-            int showLines = picture / pictureInLine;
+            int lines = picture / pictureInLine;
             int pictureRemains = picture % pictureInLine;
-            Console.WriteLine("Lines {0}, remains pictures {1}", showLines, pictureRemains);
+            Console.WriteLine("lines {0}, remains pictures {1}", showLines, pictureRemains);
         }
     }
 }
