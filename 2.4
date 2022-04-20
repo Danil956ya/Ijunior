@@ -10,11 +10,13 @@ namespace _2._4
             int minCount = 0;
             int maxCount = 100;
             int number = random.Next(minCount, maxCount);
+            int MultipleThree = 3;
+            int MultipleFive = 5;
             int result = number;
 
             for (int i = number; i <= maxCount; i++)
             {
-                if (i % 3 == 0 || i % 5 == 0)
+                if (i % MultipleThree == 0 || i % MultipleFive == 0)
                 {
                     result += i;
                     Console.WriteLine(i);
