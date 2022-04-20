@@ -1,0 +1,26 @@
+using System;
+
+namespace _2._4
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Random random = new Random();
+            int minCount = 0;
+            int maxCount = 100;
+            int number = random.Next(minCount, maxCount);
+            int result = number;
+
+            for (int i = number; i <= maxCount; i++)
+            {
+                if (i % 3 == 0 || i % 5 == 0)
+                {
+                    result += i;
+                    Console.WriteLine(i);
+                }
+            }
+            Console.WriteLine(result);     
+        }
+    }
+}
