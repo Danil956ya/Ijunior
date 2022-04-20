@@ -14,12 +14,7 @@ namespace junior_2._2
             {
                 Console.Write("Программа работает, введите команду для выхода: ");
                 playerInput = Console.ReadLine();
-
-                if (playerInput == exitInput)
-                {
-                    Console.WriteLine("Программа закрыта");
-                    break; 
-                }
+                isWork = playerInput != exitInput;
             }
         }
     }
