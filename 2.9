@@ -7,23 +7,18 @@ namespace _2._9
         static void Main(string[] args)
         {
             Random random = new Random();
-            int number = random.Next(28);
+            int number = random.Next(0, 27);
+            int minNumber = 100;
+            int maxNumber = 999;
             int multiplys = 0;
 
-            for (int firstNumber = 1; firstNumber <= 9; firstNumber++)
+            for (int i = number; i <= maxNumber; i += number)
             {
-                for (int middleNumber = 0; middleNumber <= 9; middleNumber++) 
-                {
-                    int lastNumber = number - (firstNumber + middleNumber);
-
-                    if (lastNumber >= 0 && lastNumber <= 9)
-                    {
-                        multiplys++;
-                    }
-                }
+                multiplys += i < minNumber ? 0 : 1;          
             }
 
-            Console.WriteLine("{0} {1}", number, multiplys);
+            Console.WriteLine("Your number is: {0} \nMultiple is: {1}",number,multiplys);
+
         }
     }
 }
