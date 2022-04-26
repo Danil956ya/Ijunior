@@ -12,16 +12,16 @@ namespace _2._7
             Console.Write("Введите символ: ");
             string symbol = Console.ReadLine();
             int maxLenght = name.Length + 1;
-            string maxSymbol = symbol;
+            string symbolCount = symbol;
 
             for(int i = 0; i < maxLenght; i++)
             {
-               maxSymbol += symbol;
+               symbolCount += symbol;
             }
 
-            Console.WriteLine(maxSymbol);
+            Console.WriteLine(symbolCount);
             Console.WriteLine(symbol + name + symbol);
-            Console.WriteLine(maxSymbol);
+            Console.WriteLine(symbolCount);
         }
     }
 }
