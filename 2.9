@@ -1,0 +1,29 @@
+using System;
+
+namespace _2._9
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Random random = new Random();
+            int number = random.Next(28);
+            int multiplys = 0;
+
+            for (int firstNumber = 1; firstNumber <= 9; firstNumber++)
+            {
+                for (int middleNumber = 0; middleNumber <= 9; middleNumber++) 
+                {
+                    int lastNumber = number - (firstNumber + middleNumber);
+
+                    if (lastNumber >= 0 && lastNumber <= 9)
+                    {
+                        multiplys++;
+                    }
+                }
+            }
+
+            Console.WriteLine("{0} {1}", number, multiplys);
+        }
+    }
+}
