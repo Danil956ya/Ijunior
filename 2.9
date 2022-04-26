@@ -10,14 +10,14 @@ namespace _2._9
             int number = random.Next(0, 27);
             int minNumber = 100;
             int maxNumber = 999;
-            int multiplys = 0;
+            int multiply = 0;
 
             for (int i = number; i <= maxNumber; i += number)
             {
-                multiplys += i < minNumber ? 0 : 1;          
+                multiply += i < minNumber ? 0 : 1;          
             }
 
-            Console.WriteLine("Your number is: {0} \nMultiple is: {1}",number,multiplys);
+            Console.WriteLine("Your number is: {0} \nMultiple is: {1}",number,multiply);
 
         }
     }
