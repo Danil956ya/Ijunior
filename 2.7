@@ -10,20 +10,18 @@ namespace _2._7
             Console.Write("Введите имя: ");
             string name = Console.ReadLine();
             Console.Write("Введите символ: ");
-            char symbol = Convert.ToChar(Console.ReadLine());
-            int maxLenght = name.Length + 2;
+            string symbol = Console.ReadLine();
+            int maxLenght = name.Length + 1;
+            string maxSymbol = symbol;
 
             for(int i = 0; i < maxLenght; i++)
             {
-                Console.Write(symbol);
+               maxSymbol += symbol;
             }
 
-            Console.WriteLine("\n" + symbol + name + symbol);
-
-            for(int i = 0; i < maxLenght; i++)
-            {
-                Console.Write(symbol);
-            }
+            Console.WriteLine(maxSymbol);
+            Console.WriteLine(symbol + name + symbol);
+            Console.WriteLine(maxSymbol);
         }
     }
 }
