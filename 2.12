@@ -13,6 +13,8 @@ namespace _2._12
             int healt = 100;
             int damage = 5;
             int luckyDamage = random.Next(5, 10);
+            int spitDamage = 25;
+            int attackDamage = 10;
             Console.Clear();
             Console.WriteLine("- {0}, Перед тобой САМЫЙ сильный человек в мире, покажи ему!", name);
             int enemyHealt = 100;
@@ -75,7 +77,7 @@ namespace _2._12
                         break;
                     case "attack":
                         Console.WriteLine("Вот это удар! Стоп, а он что? ОН ТОЖЕ ТЕБЯ УДАРИЛ!");
-                        enemyHealt -= damage * 2;
+                        enemyHealt -= attackDamage;
                         Console.WriteLine(enemyStats + enemyHealt);
                         healt -= enemyDamage;
                         Console.WriteLine(heroStats + healt);
@@ -99,7 +101,7 @@ namespace _2._12
                         if(spitReady)
                         {
                             Console.WriteLine("ТЫ ПЛЮНУЛ В НЕГО!!!! ТАК ДЕРЖАТЬ!\nВраг, вытерает твои слюни, время для удара!");
-                            enemyHealt -= damage * 3;
+                            enemyHealt -= spitDamage;
                             Console.WriteLine(enemyStats + enemyHealt);
                             Console.WriteLine(heroStats + healt);
                         }
