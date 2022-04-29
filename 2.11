@@ -1,0 +1,45 @@
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        string text = Console.ReadLine();
+        int score = 0;
+        int deep = 0;
+
+        if (text.Length == 0)
+        {
+            Console.WriteLine("Error");
+            return;
+        }
+
+        for (int i = 0; i < text.Length; i++)
+        {
+        
+            if(text[i] == '(')
+            {
+                if(text[i + 1] == ')')
+                {
+                    deep = 0;
+                }
+                else
+                {
+                    deep++;
+                }
+            }
+            else if (text[i] == ')')
+            {                
+                deep--;    
+            }
+
+            if(deep == 0)
+            {
+                score++;
+            }
+
+        }
+        
+        Console.WriteLine(score);
+    }
+}
