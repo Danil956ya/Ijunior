@@ -1,0 +1,125 @@
+using System;
+
+namespace _2._12
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Random random = new Random();
+            Console.WriteLine("- Привет, герой, как звать то тебя?");
+            Console.Write("Ваше имя: ");
+            string name = Console.ReadLine();
+            int healt = 100;
+            int damage = 5;
+            int luckyDamage = random.Next(5, 10);
+            Console.Clear();
+            Console.WriteLine("- {0}, Перед тобой САМЫЙ сильный человек в мире, покажи ему!", name);
+            int enemyHealt = 100;
+            int enemyDamage = 15;
+            Console.WriteLine("- А вот и его статистика! \nЗдоровье: {0}. \nУрон: {1}.", enemyHealt, enemyDamage);
+            string command = "default";
+            int healCooldown = 0;
+            int troweCooldown = 0;
+            bool spitReady = false;
+            bool inGame = healt >= 0 && enemyHealt >= 0;
+            string enemyStats = "*Здоворье САМОГО сильного: ";
+            string heroStats = "*Ваше здоворье: ";
+
+            while(inGame)
+            {
+                healCooldown--;
+                troweCooldown--;
+                Console.WriteLine("- Что будем делать? *(Для помощи напиши - help)*");
+                command = Console.ReadLine();
+
+                switch(command)
+                {
+                    case "heal":
+
+                        if(healCooldown <= 0)
+                        {
+                            Console.WriteLine("- Зачем ты достал еду? Аааааа, приятного аппетита!\n*Пока ты жевал бутерброд, враг смачно ударил тебя по лицу*");
+                            healt -= enemyDamage;
+                            healt += 30;
+                            Console.WriteLine(enemyStats + enemyHealt);
+                            Console.WriteLine(heroStats + healt);
+                            healCooldown = 3;
+                        }
+                        else
+                        {
+                            Console.WriteLine("- Ты же только лечился, так не пойдёт! \n- Получи в лицо!");
+                            Console.WriteLine(enemyStats + enemyHealt);
+                            healt -= enemyDamage;
+                            Console.WriteLine(heroStats + healt);
+                        }
+                        break;
+                    case "trowe":
+
+                        if(troweCooldown <= 0)
+                        {
+                            Console.WriteLine("- ТЫ БРОСИЛ В НЕГО КАМЕНЬ!!! О нет, он его поднимает, и бросает обратно в тебя!");
+                            enemyHealt -= luckyDamage;
+                            Console.WriteLine(enemyStats + enemyHealt);
+                            healt -= enemyDamage;
+                            Console.WriteLine(heroStats + healt);
+                            troweCooldown = 3;
+                        }
+                        else
+                        {
+                            Console.WriteLine("ЭЙ! ТЫ ЖЕ ТОЛЬКО ЧТО КИНУЛ В НЕГО КАМЕНЬ! Получи в лицо!");
+                            Console.WriteLine(enemyStats + enemyHealt);
+                            healt -= enemyDamage;
+                            Console.WriteLine(heroStats + healt);
+                        }
+                        break;
+                    case "attack":
+                        Console.WriteLine("Вот это удар! Стоп, а он что? ОН ТОЖЕ ТЕБЯ УДАРИЛ!");
+                        enemyHealt -= damage * 2;
+                        Console.WriteLine(enemyStats + enemyHealt);
+                        healt -= enemyDamage;
+                        Console.WriteLine(heroStats + healt);
+                        break;
+                    case "bite":
+                        Console.WriteLine("Ого, ты укусил его! \nНо он тоже не промах - получи в лицо!\n");
+                        enemyHealt -= damage;
+                        Console.WriteLine(enemyStats + enemyHealt);
+                        healt -= enemyDamage;
+                        Console.WriteLine(heroStats + healt);
+                        break;
+                    case "getspit":
+                        spitReady = true;
+                        Console.WriteLine("Ты готовишься... Что? Плюнуть? Ну окей.... \nВраг, удерживая смех, бьёт тебя!");
+                        healt -= enemyDamage;
+                        Console.WriteLine(enemyStats + enemyHealt);
+                        Console.WriteLine(heroStats + healt);
+                        break;
+                    case "spit":
+
+                        if(spitReady)
+                        {
+                            Console.WriteLine("ТЫ ПЛЮНУЛ В НЕГО!!!! ТАК ДЕРЖАТЬ!\nВраг, вытерает твои слюни, время для удара!");
+                            enemyHealt -= damage * 3;
+                            Console.WriteLine(enemyStats + enemyHealt);
+                            Console.WriteLine(heroStats + healt);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Правда? ты решил плюнуть в него? Ну попробуй. \n*Ваши слюни не долетают до врага.*\nВас бьют...");
+                            healt -= enemyDamage;
+                            Console.WriteLine(enemyStats + enemyHealt);
+                            Console.WriteLine(heroStats + healt);
+                        }
+                        spitReady = false;
+                        break;
+                    case "help":
+                        Console.WriteLine("Ты уже забыл что умеешь делать? Запоминай - 'bite', 'heal', 'attack', 'trowe', 'getspit', 'spit'.");
+                        break;
+                }
+
+            }
+            
+
+        }
+    }
+}
