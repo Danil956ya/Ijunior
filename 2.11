@@ -10,26 +10,25 @@ public class Program
 	   
 	  for(int i = 0; i < input.Length; i++)
 	   {
-	   	
-	   
 	   		if(input[i] == '(')
-			  {
-			   		depth++;	
-			  }
+		        {
+			    depth++;	
+			}
 			  
 			if(input[i] == ')')
-			  {
-			   		depth--;
-			  }
+			{
+			    depth--;
+			}
 			  
 			if(maxDepth < depth)
-				{
-					maxDepth = depth;
-				}
-				if(depth < 0)
-				{
-					break;
-				}
+			{
+			  maxDepth = depth;
+			}
+
+			if(depth < 0)
+			{
+			  break;
+			}
 	   }
 	   if(depth == 0)
 	   {
