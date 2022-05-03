@@ -28,10 +28,15 @@ public class Program
 				
 			if(depth < 0)
 			{
+                           Console.WriteLine("Is not correct");
 			   break;
 			}
+                        else
+                        {
+                          Console.WriteLine("Correct, depths: {0}", maxDepth)
+                        }
 	   }
-	   	 Console.WriteLine("correct, depth is {0}",maxDepth);
+	   	 
 	   
 	 
     }
