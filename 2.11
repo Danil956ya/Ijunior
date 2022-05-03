@@ -4,25 +4,34 @@ public class Program
 {
     static public void Main ()
     {
-           string input = Console.ReadLine();
+       string input = Console.ReadLine();
+	   int maxDepth = 0;
 	   int depth = 0;
-	   int score = 0;
-
+	   int count = 0;
+	   
 	  for(int i = 0; i < input.Length; i++)
-	  {
-	   		if(input[i] == '(')
-			   {
-			   	depth++;	
-			   }
+	   {
+	   	if(input[i] == '(')
+	        {
+		   count++;	
+	        }
 
-			if(input[i] == ')')
-			   {
-			        depth--;
-			   }
+		if(input[i] == ')')
+	        {
+	           count--;
+	        }
 
-		depth = depth <= 0? score++: score;
+		if(maxDepth < depth)
+		{
+		   maxDepth = depth;
+		}
+				
+		count = count <= 0? depth++:depth;
+		
 	   }
-	  Console.WriteLine("score is : " + score);
+
+	    Console.WriteLine("correct, depth is {0} and {1}", depth, maxDepth);
+	   
 	 
     }
 }
