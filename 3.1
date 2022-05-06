@@ -15,17 +15,19 @@ namespace _3._1
                 for (int j = 0; j < array.GetLength(1); j++)
                 {
                     Console.Write(array[i, j] + " ");
-                    if (i == 1)
-                    {
-                        sumOfSecondLine = sumOfSecondLine + array[i, j];
-                    }
-                    if (j == 0)
-                    {
-                        productOfFirstColumn = productOfFirstColumn * array[i, j];
-                    }
                 }
                 Console.WriteLine();
             }
+            for (int j = 0; j < array.GetLength(1); j++)
+            {
+                sumOfSecondLine += array[1, j];
+            }
+
+            for (int i = 0; i < array.GetLength(0); i++)
+            {
+                productOfFirstColumn *= array[i, 0];
+            }
+
             Console.WriteLine("Cумма второй строки: {0} , Произведение первого столбца: {1}",sumOfSecondLine,productOfFirstColumn);
         }
     }
