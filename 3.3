@@ -1,6 +1,6 @@
 using System;
 
-namespace ConsoleApp4_9_3
+namespace _3._3
 {
     class Program
     {
@@ -10,10 +10,12 @@ namespace ConsoleApp4_9_3
             string initialArray = "";
             string maxArray = "";
             int[] array = new int[30];
+            int minNumber = 1;
+            int maxNumber = 9;
 
             for (int i = 0; i < array.Length; i++)
             {
-                array[i] = random.Next(1, 9);
+                array[i] = random.Next(minNumber, maxNumber);
                 Console.Write(array[i] + " ");
                 initialArray += Convert.ToString(array[i] + " ");
 
@@ -37,11 +39,11 @@ namespace ConsoleApp4_9_3
 
                 }
 
-                if ((i == array.Length - 1) && (array[array.Length - 1] > array[array.Length - 2]))
-                {
-                    maxArray += "" + array[array.Length - 1];
-                }
+            }
 
+            if ((array[array.Length - 1] > array[array.Length - 2]))
+            {
+                maxArray += "" + array[array.Length - 1];
             }
 
             Console.WriteLine("\nЛокальные максимумы: {0}", maxArray);
