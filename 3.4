@@ -8,47 +8,47 @@ namespace _3._4
         {
             int lengthArray = 0;
             int[] array = new int[lengthArray];
-            int[] arrayCopy = new int[lengthArray];
             int arraySum = 0;
+            bool isWork = true;
 
-            while (true)
+            while (isWork)
             {
                 Console.WriteLine("Введите число, exit или sum: ");
                 string Message = Console.ReadLine();
 
                 if (Message != "sum" && Message != "exit")
                 {
-                    int number = Convert.ToInt32(Message);
-                    lengthArray += 1;
-                    array = new int[lengthArray];
+                    int input = Convert.ToInt32(Message);
 
-                    for (int i = 0; i < arrayCopy.Length; i++)
+                    foreach (int number in array)
                     {
-                        array[i] = arrayCopy[i];
+                        Console.Write(number + " ");
                     }
 
-                    array[lengthArray - 1] = number;
-                    arrayCopy = new int[lengthArray];
+                    int[] tempArray = new int[array.Length + 1];
 
                     for (int i = 0; i < array.Length; i++)
                     {
-                        arrayCopy[i] = array[i];
-                        Console.WriteLine("spisok chisel: " + array[i]);
+                        tempArray[i] = array[i];
                     }
 
-                    arrayCopy[lengthArray - 1] = number;
+                    tempArray[tempArray.Length - 1] = Convert.ToInt32(input);
+                    array = tempArray;
                 }
 
                 else if (Message == "sum")
                 {
-                    for (int i = 0; i < array.Length; i++)
-                        arraySum += array[i];
+                    foreach (int number in array)
+                    {
+                        arraySum += number;
+                    }
+
                     Console.WriteLine("Сумма массива: {0}", arraySum);
                     arraySum = 0;
                 }
                 else if (Message == "exit")
                 {
-                    break;
+                    isWork = false;
                 }
                 else Console.WriteLine("Нет такой команды.");
 
