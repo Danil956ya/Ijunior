@@ -7,9 +7,8 @@ namespace _3._3
         static void Main(string[] args)
         {
             Random random = new Random();
-            string initialArray = "";
-            string maxArray = "";
-            int[] array = new int[30];
+            int arraySize = 30;
+            int[] array = new int[arraySize];
             int minNumber = 1;
             int maxNumber = 9;
 
@@ -17,36 +16,27 @@ namespace _3._3
             {
                 array[i] = random.Next(minNumber, maxNumber);
                 Console.Write(array[i] + " ");
-                initialArray += Convert.ToString(array[i] + " ");
-
-                if ((i == array.Length - 1) && (array[0] > array[1]))
-                {
-                    maxArray += array[0] + " ";
-                }
-
-                if (i == array.Length - 1)
-                {
-
-                    for (int j = 1; j < array.Length - 1; j++)
-                    {
-
-                        if (array[j] > array[j + 1] && array[j] > array[j - 1])
-                        {
-                            maxArray += array[j] + " ";
-                        }
-
-                    }
-
-                }
-
             }
 
-            if ((array[array.Length - 1] > array[array.Length - 2]))
+            Console.Write("\nСписок локальных максимумов: ");
+
+            if (array[0] > array[1])
             {
-                maxArray += "" + array[array.Length - 1];
+                Console.Write(array[0] + " ");
             }
 
-            Console.WriteLine("\nЛокальные максимумы: {0}", maxArray);
+            for (int i = 1; i < array.Length - 1; ++i)
+            {
+                if (array[i - 1] < array[i] && array[i + 1] < array[i])
+                {
+                    Console.Write(array[i] + " ");
+                }
+            }
+
+            if (array[array.Length - 1] > array[array.Length - 2])
+            {
+                Console.Write(array[array.Length - 1]);
+            }
         }
     }
 }
