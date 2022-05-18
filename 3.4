@@ -6,19 +6,17 @@ namespace _3._4
     {
         static void Main(string[] args)
         {
-            int lengthArray = 0;
-            int[] array = new int[lengthArray];
-            int arraySum = 0;
+            int[] array = new int[0];
             bool isWork = true;
 
             while (isWork)
             {
                 Console.WriteLine("Введите число, exit или sum: ");
-                string Message = Console.ReadLine();
+                string message = Console.ReadLine();
 
-                if (Message != "sum" && Message != "exit")
+                if (message != "sum" && message != "exit")
                 {
-                    int input = Convert.ToInt32(Message);
+                    int input = Convert.ToInt32(message);
 
                     foreach (int number in array)
                     {
@@ -36,22 +34,24 @@ namespace _3._4
                     array = tempArray;
                 }
 
-                else if (Message == "sum")
+                else if (message == "sum")
                 {
+                    int arraySum = 0;
                     foreach (int number in array)
                     {
                         arraySum += number;
                     }
-
                     Console.WriteLine("Сумма массива: {0}", arraySum);
                     arraySum = 0;
                 }
-                else if (Message == "exit")
+                else if (message == "exit")
                 {
                     isWork = false;
                 }
-                else Console.WriteLine("Нет такой команды.");
-
+                else
+                {
+                    Console.WriteLine("Нет такой команды.");
+                }
             }
         }
     }
