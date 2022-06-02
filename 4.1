@@ -1,0 +1,116 @@
+using System;
+
+namespace _4._1
+{
+    class Program
+    {
+        static void Main()
+        {
+            string[] fullname = new string[0];
+            string[] career = new string[0];
+            Menu(fullname, career);
+
+        }
+        static void Menu(string[] fullname, string[] career)
+        {
+            Console.WriteLine("Выбирете пункт. \n1. Добавить досье.\n2. Вывести досье.\n3. Удалить досье.\n4. Найти по фамилии.\n5. Выход.");
+            int input = Convert.ToInt32(Console.ReadLine());
+            switch (input)
+            {
+                case 1:
+                    Console.WriteLine("Введите имя");
+                    string name = Console.ReadLine();
+                    Console.WriteLine("введите професиию.");
+                    string job = Console.ReadLine();
+                    AddDossier(job, name, fullname, career);
+                    Console.Clear();
+                    break;
+                case 2:
+                    OutputDossiers(fullname, career);
+                    break;
+                case 3:
+                    Console.Clear();
+                    Console.WriteLine("Введите номер досье.");
+                    int index = Convert.ToInt32(Console.ReadLine()) - 1;
+                    DeleteDossiers(ref fullname, index);
+                    DeleteDossiers(ref career, index);
+                    Menu(fullname, career);
+                    break;
+                case 4:
+                    FindDossiers(ref fullname, career);
+                    Menu(fullname, career);
+                    break;
+                default:
+                    Console.WriteLine("Пока!");
+                    Console.ReadKey();
+                    break;
+            }
+
+
+        }
+        static void AddDossier(string jobName, string name, string[] fullname, string[] career)
+        {
+            Console.Clear();
+            Array.Resize(ref fullname, fullname.Length + 1);
+            Array.Resize(ref career, career.Length + 1);
+            fullname[fullname.Length - 1] = name;
+            career[career.Length - 1] = jobName;
+            Menu(fullname, career);
+        }
+        static void OutputDossiers(string[] fullname, string[] career)
+        {
+            Console.Clear();
+            if (fullname.Length == 0)
+            {
+                Console.WriteLine("В списке пока никого нету.");
+            }
+            else
+            {
+                Console.WriteLine("Имя и должность.");
+            }
+
+            for (int i = 0; i < fullname.Length; i++)
+            {
+                Console.WriteLine($"{i + 1}){fullname[i]} - {career[i]}");
+            }
+            Menu(fullname, career);
+        }
+        static void DeleteDossiers(ref string[] array, int index)
+        {
+            if (array.Length != 0)
+            {
+                string[] newArray = new string[array.Length - 1];
+
+                for (int i = 0; i < index; i++)
+                {
+                    newArray[i] = array[i];
+                }
+
+                for (int i = index + 1; i < array.Length; i++)
+                {
+                    newArray[i - 1] = array[i];
+                }
+
+                array = newArray;
+            }
+            else
+            {
+                Console.WriteLine("Список пуст.");
+            }
+        }
+        static void FindDossiers(ref string[] arrays, string[] job)
+        {
+            Console.Clear();
+            Console.WriteLine("Введите фамилию");
+            string input = Console.ReadLine();
+
+            for (int i = 0; i < arrays.Length; i++)
+            {
+                if (arrays[i].Contains(input))
+                {
+                    Console.WriteLine($"{i + 1}){arrays[i]} - {job[i]}");
+                }
+            }
+        }
+    }
+}
