@@ -70,36 +70,36 @@ namespace _4._1
                 Console.WriteLine($"{i + 1}){fullname[i]} - {career[i]}");
             }
         }
-        static void DeleteDossiers(ref string[] fullname,ref string[] job)
+        static void DeleteFromArray(ref string[] array, int index)
         {
-            if (fullname.Length != 0)
+            if (array.Length != 0)
             {
-                Console.Clear();
-                Console.WriteLine("Введите номер досье.");
-                int index = Convert.ToInt32(Console.ReadLine()) - 1;
-
-                string[] TempName = new string[fullname.Length - 1];
-                string[] TempJob = new string[fullname.Length - 1];
+                string[] TempName = new string[array.Length - 1];
 
                 for (int i = 0; i < index; i++)
                 {
-                    TempJob[i] = job[i];
-                    TempName[i] = fullname[i];
+                    TempName[i] = array[i];
                 }
 
-                for (int i = index + 1; i < fullname.Length; i++)
+                for (int i = index + 1; i < array.Length; i++)
                 {
-                    TempJob[i - 1] = fullname[i];
-                    TempName[i - 1] = job[i];
+                    TempName[i - 1] = array[i];
                 }
 
-                fullname = TempName;
-                job = TempJob;
+                array = TempName;
             }
             else
             {
                 Console.WriteLine("Список пуст.");
             }
+        }
+        static void DeleteDossiers(ref string[] fullname, ref string[] job)
+        {
+            Console.Clear();
+            Console.WriteLine("Введите номер досье.");
+            int index = Convert.ToInt32(Console.ReadLine()) - 1;
+            DeleteFromArray(ref fullname, index);
+            DeleteFromArray(ref job, index);
         }
         static void FindDossiers(string[] arrays, string[] job)
         {
@@ -117,3 +117,4 @@ namespace _4._1
         }
     }
 }
+
