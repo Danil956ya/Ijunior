@@ -7,12 +7,9 @@ namespace _4._2
         static void Main()
         {
             int maxHealt = 10;
-            while (true)
-            {
-                Console.WriteLine("Выбирете сколько у вас жизней. Максимум жизней: {0}.", maxHealt);
-                int healt = Convert.ToInt32(Console.ReadLine());
-                DrawBar(healt, maxHealt);
-            }
+            Console.WriteLine("Выбирете сколько у вас жизней. Максимум жизней: {0}.", maxHealt);
+            int healt = Convert.ToInt32(Console.ReadLine());
+            DrawBar(healt, maxHealt);
         }
 
         static void DrawBar(int value, int maxValue)
