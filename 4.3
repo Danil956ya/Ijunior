@@ -6,13 +6,13 @@ namespace _4._3
     {
         static void Main(string[] args)
         {
-            UserImput(Console.ReadLine());
+            IsInput(Console.ReadLine());
         }
-        static int UserImput(string value = "")
+        static int IsInput(string value = "")
         {
             int tempInt;
 
-            while(!int.TryParse(value, out tempInt))
+            while(int.TryParse(value, out tempInt) == false)
             {
                 Console.WriteLine("Конвертация не удалась, введите число!");
                 value = Console.ReadLine();
