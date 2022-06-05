@@ -6,83 +6,93 @@ namespace _4._4
     {
         static void Main()
         {
-            DrawMap();
+            int playerX;
+            int playerY;
+            int playerDX = 0;
+            int playerDY = 0;
+            char[,] map = ReadMap(out playerX, out playerY);
+
+            DrawMap(map);
+
+            while(map[playerX, playerY] != 'X')
+            {
+                ChangeDirection(map, ref playerX, ref playerY,ref playerDX, ref playerDY);
+            }
         }
 
-        static void DrawMap()
+        static char[,] ReadMap(out int X, out int Y)
         {
+            X = 0;
+            Y = 0;
             Console.CursorVisible = false;
-            int positionX = 3;
-            int positionY = 5;
 
             char[,] map =
             {
                {'@','@','@','@','@','@','@','@','@','@','@','@',},
                {'@',' ',' ',' ',' ',' ',' ',' ',' ',' ','X','@',},
                {'@','@',' ',' ',' ',' ',' ',' ',' ',' ','@','@',},
-               {'@',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','@',},
+               {'@','#',' ',' ',' ',' ',' ',' ',' ',' ',' ','@',},
                {'@','@','@','@','@','@','@','@','@','@','@','@',}
             };
 
-            while (map[positionX,positionY] != 'X')
+            for (int i = 0; i < map.GetLength(0); i++)
             {
-                for (int i = 0; i < map.GetLength(0); i++)
+                for (int j = 0; j < map.GetLength(1); j++)
                 {
-
-                    for (int j = 0; j < map.GetLength(1); j++)
+                    if (map[i, j] == '#')
                     {
-                        Console.Write(map[i, j]);
+                        X = i;
+                        Y = j;
                     }
-                    Console.WriteLine();
                 }
-                
-                Move(map, ref positionX, ref positionY);
             }
-            
-            EndGame();
+            return map;
         }
-        static void Move(char[,] map, ref int positionX, ref int positionY)
+        static void DrawMap(char[,] map)
         {
-            Console.SetCursorPosition(positionY, positionX);
-            Console.Write("#");
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
+                    Console.Write(map[i, j]);
+                }
+                Console.WriteLine();
+            }
+        }
+
+        static void ChangeDirection(char[,] map, ref int positionX, ref int positionY,ref int directionX, ref int directionY)
+        {
             ConsoleKeyInfo charKey = Console.ReadKey();
 
             switch (charKey.Key)
             {
                 case ConsoleKey.UpArrow:
-                    if (map[positionX - 1, positionY] != '@')
-                    {
-                        positionX--;
-                    }
+                    directionX = -1; directionY = 0;
                     break;
                 case ConsoleKey.DownArrow:
-                    if (map[positionX + 1, positionY] != '@')
-                    {
-                        positionX++;
-                    }
+                    directionX = 1; directionY = 0;
                     break;
                 case ConsoleKey.LeftArrow:
-                    if (map[positionX, positionY - 1] != '@')
-                    {
-                        positionY--;
-                    }
+                    directionX = 0; directionY = -1;
                     break;
                 case ConsoleKey.RightArrow:
-                    if (map[positionX, positionY + 1] != '@')
-                    {
-                        positionY++;
-                    }
+                    directionX = 0; directionY = 1;
                     break;
             }
-            Console.Clear();
 
+            if(map[positionX + directionX, positionY + directionY] != '@')
+            {
+                Move(ref positionX, ref positionY, ref directionX, ref directionY);
+            }
         }
-        
-        static void EndGame()
+        static void Move(ref int positionX, ref int positionY, ref int directionX, ref int directionY)
         {
-            Console.WriteLine("Вы вышли из комнаты, а значит - победили!");
-            return;
+            Console.SetCursorPosition(positionY, positionX);
+            Console.Write(" ");
+            positionX += directionX;
+            positionY += directionY;
+            Console.SetCursorPosition(positionY, positionX);
+            Console.Write("#");
         }
-
     }
 }
