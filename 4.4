@@ -4,25 +4,27 @@ namespace _4._4
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             DrawMap();
         }
 
-        static char[,] DrawMap()
+        static void DrawMap()
         {
             Console.CursorVisible = false;
-            int positionX = 3, positionY = 5;
+            int positionX = 3;
+            int positionY = 5;
+
             char[,] map =
             {
                {'@','@','@','@','@','@','@','@','@','@','@','@',},
-               {'@',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','@',},
+               {'@',' ',' ',' ',' ',' ',' ',' ',' ',' ','X','@',},
                {'@','@',' ',' ',' ',' ',' ',' ',' ',' ','@','@',},
                {'@',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','@',},
                {'@','@','@','@','@','@','@','@','@','@','@','@',}
             };
 
-            while (true)
+            while (map[positionX,positionY] != 'X')
             {
                 for (int i = 0; i < map.GetLength(0); i++)
                 {
@@ -31,44 +33,55 @@ namespace _4._4
                     {
                         Console.Write(map[i, j]);
                     }
-
                     Console.WriteLine();
                 }
-
-                Console.SetCursorPosition(positionY, positionX);
-                Console.Write("#");
-                ConsoleKeyInfo charKey = Console.ReadKey();
-
-                switch(charKey.Key)
-                {
-                    case ConsoleKey.UpArrow:
-                        if(map[positionX - 1, positionY] != '@')
-                        {
-                            positionX--;
-                        }
-                        break;
-                    case ConsoleKey.DownArrow:
-                        if (map[positionX + 1, positionY] != '@')
-                        {
-                            positionX++;
-                        }
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        if(map[positionX, positionY - 1] != '@')
-                        {
-                            positionY--;
-                        }
-                        break;
-                    case ConsoleKey.RightArrow:
-                        if (map[positionX, positionY + 1] != '@')
-                        {
-                            positionY++;
-                        }
-                        break;
-                }
-                Console.Clear();
+                
+                Move(map, ref positionX, ref positionY);
             }
+            
+            EndGame();
+        }
+        static void Move(char[,] map, ref int positionX, ref int positionY)
+        {
+            Console.SetCursorPosition(positionY, positionX);
+            Console.Write("#");
+            ConsoleKeyInfo charKey = Console.ReadKey();
 
+            switch (charKey.Key)
+            {
+                case ConsoleKey.UpArrow:
+                    if (map[positionX - 1, positionY] != '@')
+                    {
+                        positionX--;
+                    }
+                    break;
+                case ConsoleKey.DownArrow:
+                    if (map[positionX + 1, positionY] != '@')
+                    {
+                        positionX++;
+                    }
+                    break;
+                case ConsoleKey.LeftArrow:
+                    if (map[positionX, positionY - 1] != '@')
+                    {
+                        positionY--;
+                    }
+                    break;
+                case ConsoleKey.RightArrow:
+                    if (map[positionX, positionY + 1] != '@')
+                    {
+                        positionY++;
+                    }
+                    break;
+            }
+            Console.Clear();
+
+        }
+        
+        static void EndGame()
+        {
+            Console.WriteLine("Вы вышли из комнаты, а значит - победили!");
+            return;
         }
 
     }
