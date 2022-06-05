@@ -6,17 +6,19 @@ namespace _4._3
     {
         static void Main(string[] args)
         {
-            EnterNumber(Console.ReadLine());
+            GetNumber();
         }
 
-        static int EnterNumber(string value = "")
+        static int GetNumber()
         {
             int tempInt;
+            Console.WriteLine("Введите строку.");
+            string input = Console.ReadLine();
 
-            while(int.TryParse(value, out tempInt) == false)
+            while(int.TryParse(input, out tempInt) == false)
             {
                 Console.WriteLine("Конвертация не удалась, введите число!");
-                value = Console.ReadLine();
+                input = Console.ReadLine();
             }
 
             Console.WriteLine("Верно!");
