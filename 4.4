@@ -8,10 +8,11 @@ namespace _4._4
         {
             DrawMap();
         }
+
         static char[,] DrawMap()
         {
             Console.CursorVisible = false;
-            int playerX = 3, playerY = 5;
+            int positionX = 3, positionY = 5;
             char[,] map =
             {
                {'@','@','@','@','@','@','@','@','@','@','@','@',},
@@ -34,34 +35,34 @@ namespace _4._4
                     Console.WriteLine();
                 }
 
-                Console.SetCursorPosition(playerY, playerX);
+                Console.SetCursorPosition(positionY, positionX);
                 Console.Write("#");
                 ConsoleKeyInfo charKey = Console.ReadKey();
 
                 switch(charKey.Key)
                 {
                     case ConsoleKey.UpArrow:
-                        if(map[playerX - 1, playerY] != '@')
+                        if(map[positionX - 1, positionY] != '@')
                         {
-                            playerX--;
+                            positionX--;
                         }
                         break;
                     case ConsoleKey.DownArrow:
-                        if (map[playerX + 1, playerY] != '@')
+                        if (map[positionX + 1, positionY] != '@')
                         {
-                            playerX++;
+                            positionX++;
                         }
                         break;
                     case ConsoleKey.LeftArrow:
-                        if(map[playerX, playerY - 1] != '@')
+                        if(map[positionX, positionY - 1] != '@')
                         {
-                            playerY--;
+                            positionY--;
                         }
                         break;
                     case ConsoleKey.RightArrow:
-                        if (map[playerX, playerY + 1] != '@')
+                        if (map[positionX, positionY + 1] != '@')
                         {
-                            playerY++;
+                            positionY++;
                         }
                         break;
                 }
