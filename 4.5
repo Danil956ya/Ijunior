@@ -23,6 +23,7 @@ namespace _4._5
         static void Shuffle(int[] array)
         {
             Random random = new Random();
+            
             for (int i = array.Length - 1; i >= 0; i--)
             {
                 int randomItem = random.Next(i);
@@ -30,7 +31,6 @@ namespace _4._5
                 array[randomItem] = array[i];
                 array[i] = shuffledElement;
             }
-            Console.WriteLine();
         }
     }
 }
