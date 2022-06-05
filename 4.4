@@ -1,0 +1,74 @@
+using System;
+
+namespace _4._4
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            DrawMap();
+        }
+        static char[,] DrawMap()
+        {
+            Console.CursorVisible = false;
+            int playerX = 3, playerY = 5;
+            char[,] map =
+            {
+               {'@','@','@','@','@','@','@','@','@','@','@','@',},
+               {'@',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','@',},
+               {'@','@',' ',' ',' ',' ',' ',' ',' ',' ','@','@',},
+               {'@',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','@',},
+               {'@','@','@','@','@','@','@','@','@','@','@','@',}
+            };
+
+            while (true)
+            {
+                for (int i = 0; i < map.GetLength(0); i++)
+                {
+
+                    for (int j = 0; j < map.GetLength(1); j++)
+                    {
+                        Console.Write(map[i, j]);
+                    }
+
+                    Console.WriteLine();
+                }
+
+                Console.SetCursorPosition(playerY, playerX);
+                Console.Write("#");
+                ConsoleKeyInfo charKey = Console.ReadKey();
+
+                switch(charKey.Key)
+                {
+                    case ConsoleKey.UpArrow:
+                        if(map[playerX - 1, playerY] != '@')
+                        {
+                            playerX--;
+                        }
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (map[playerX + 1, playerY] != '@')
+                        {
+                            playerX++;
+                        }
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        if(map[playerX, playerY - 1] != '@')
+                        {
+                            playerY--;
+                        }
+                        break;
+                    case ConsoleKey.RightArrow:
+                        if (map[playerX, playerY + 1] != '@')
+                        {
+                            playerY++;
+                        }
+                        break;
+                }
+                Console.Clear();
+            }
+
+        }
+
+    }
+}
