@@ -1,0 +1,25 @@
+using System;
+
+namespace _4._3
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            UserImput(Console.ReadLine());
+        }
+        static int UserImput(string value = "")
+        {
+            int tempInt;
+
+            while(!int.TryParse(value, out tempInt))
+            {
+                Console.WriteLine("Конвертация не удалась, введите число!");
+                value = Console.ReadLine();
+            }
+
+            Console.WriteLine("Верно!");
+            return tempInt;
+        }
+    }
+}
