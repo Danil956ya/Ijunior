@@ -6,24 +6,31 @@ namespace _4._4
     {
         static void Main()
         {
-            int playerX;
-            int playerY;
-            int playerDX = 0;
-            int playerDY = 0;
-            char[,] map = ReadMap(out playerX, out playerY);
+            int playerPositionX;
+            int playerPositionY;
+            int playerDirectionX = 0;
+            int playerDirectionY = 0;
+            char[,] map = ReadMap(out playerPositionX, out playerPositionY);
 
             DrawMap(map);
 
-            while(map[playerX, playerY] != 'X')
+            while (map[playerPositionX, playerPositionY] != 'X')
             {
-                ChangeDirection(map, ref playerX, ref playerY,ref playerDX, ref playerDY);
+                ChangeDirection(map, ref playerPositionX, ref playerPositionY, ref playerDirectionX, ref playerDirectionY);
+
+                if (map[playerPositionX + playerDirectionX, playerPositionY + playerDirectionY] != '@')
+                {
+                    Move(ref playerPositionX, ref playerPositionY, playerDirectionX, playerDirectionY);
+                }
             }
+            Console.Clear();
+            Console.WriteLine("Вы выйграли!");
         }
 
-        static char[,] ReadMap(out int X, out int Y)
+        static char[,] ReadMap(out int positionX, out int positionY)
         {
-            X = 0;
-            Y = 0;
+            positionX = 0;
+            positionY = 0;
             Console.CursorVisible = false;
 
             char[,] map =
@@ -41,8 +48,8 @@ namespace _4._4
                 {
                     if (map[i, j] == '#')
                     {
-                        X = i;
-                        Y = j;
+                        positionX = i;
+                        positionY = j;
                     }
                 }
             }
@@ -60,32 +67,31 @@ namespace _4._4
             }
         }
 
-        static void ChangeDirection(char[,] map, ref int positionX, ref int positionY,ref int directionX, ref int directionY)
+        static void ChangeDirection(char[,] map, ref int positionX, ref int positionY, ref int directionX, ref int directionY)
         {
             ConsoleKeyInfo charKey = Console.ReadKey();
 
             switch (charKey.Key)
             {
                 case ConsoleKey.UpArrow:
-                    directionX = -1; directionY = 0;
+                    directionX = -1;
+                    directionY = 0;
                     break;
                 case ConsoleKey.DownArrow:
-                    directionX = 1; directionY = 0;
+                    directionX = 1;
+                    directionY = 0;
                     break;
                 case ConsoleKey.LeftArrow:
-                    directionX = 0; directionY = -1;
+                    directionX = 0;
+                    directionY = -1;
                     break;
                 case ConsoleKey.RightArrow:
-                    directionX = 0; directionY = 1;
+                    directionX = 0;
+                    directionY = 1;
                     break;
             }
-
-            if(map[positionX + directionX, positionY + directionY] != '@')
-            {
-                Move(ref positionX, ref positionY, ref directionX, ref directionY);
-            }
         }
-        static void Move(ref int positionX, ref int positionY, ref int directionX, ref int directionY)
+        static void Move(ref int positionX, ref int positionY, int directionX, int directionY)
         {
             Console.SetCursorPosition(positionY, positionX);
             Console.Write(" ");
