@@ -13,29 +13,33 @@ namespace _5._3
 
             while (message != "exit")
             {
+
                 Console.WriteLine("Введите число, exit или sum: ");
                 message = Console.ReadLine();
 
                 if (int.TryParse(message,out tempInt) == true)
                 {
-                    AddNumber(numbers, message);
+                    AddNumber(numbers, tempInt);
                 }
                 else if (message == "sum")
                 {
-                    GetSum(numbers);
+                    Sum(numbers);
                 }
                 else
                 {
                     Console.WriteLine("Нет такой команды.");
                 }
+
             }
-        }
-        static void AddNumber(List<int> numbers, string message)
-        {
-            numbers.Add(Convert.ToInt32(message));
+
         }
 
-        static void GetSum(List<int> numbers)
+        static void AddNumber(List<int> numbers, int number)
+        {
+            numbers.Add(number);
+        }
+
+        static void Sum(List<int> numbers)
         {
             int sum = 0;
             foreach (var number in numbers)
@@ -44,5 +48,6 @@ namespace _5._3
             }
             Console.WriteLine("Сумма массива: {0}", sum);
         }
+
     }
 }
