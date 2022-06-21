@@ -10,27 +10,27 @@ namespace _5._2
             GetStart();
         }
 
-        static void GetQueues(Dictionary<string, int> gusts)
+        static void GetQueues(Queue<int> gust)
         {
-            gusts.Add("Вася", 250);
-            gusts.Add("Даня", 280);
-            gusts.Add("Настя", 260);
-            gusts.Add("Вова", 230);
+            gust.Enqueue(123);
+            gust.Enqueue(12515);
+            gust.Enqueue(135136);
+            gust.Enqueue(21424);
+            gust.Enqueue(5335);
+            gust.Enqueue(540);
         }
 
-        static void CalculateGust(Dictionary<string, int> gusts, string name, int number, ref int score)
+        static void CalculateGust(Queue<int> gusts, ref int score)
         {
-            gusts.Remove(name);
-            score = score + number;
+            score = score + gusts.Peek();
+            gusts.Dequeue();
         }
 
         static void GetStart()
         {
-            Dictionary<string, int> gusts = new Dictionary<string, int>();
+            Queue<int> gusts = new Queue<int>();
             GetQueues(gusts);
             int score = 0;
-            string tempName = "";
-            int number = 0;
 
             while (gusts.Count > 0)
             {
@@ -38,12 +38,9 @@ namespace _5._2
 
                 foreach (var gust in gusts)
                 {
-                    Console.WriteLine("Гость - " + gust.Key + ", Сумма покупки на: " + gust.Value);
-                    tempName = gust.Key;
-                    number = gust.Value;
+                    Console.WriteLine("Сумма покупки на: " + gust.ToString());
                 }
-
-                CalculateGust(gusts, tempName, number, ref score);
+                CalculateGust(gusts, ref score);
                 Console.ReadKey();
                 Console.Clear();
             }
