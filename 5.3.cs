@@ -9,14 +9,14 @@ namespace _5._3
         {
             List<int> numbers = new List<int>();
             string message = "";
-            int TempInt;
+            int tempInt;
 
             while (message != "exit")
             {
                 Console.WriteLine("Введите число, exit или sum: ");
                 message = Console.ReadLine();
 
-                if (int.TryParse(message,out TempInt) == true)
+                if (int.TryParse(message,out tempInt) == true)
                 {
                     AddNumber(numbers, message);
                 }
