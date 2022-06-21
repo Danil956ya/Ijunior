@@ -9,12 +9,12 @@ namespace _5._3
         {
             List<int> numbers = new List<int>();
             string message = "";
+            int TempInt;
 
             while (message != "exit")
             {
                 Console.WriteLine("Введите число, exit или sum: ");
                 message = Console.ReadLine();
-                int TempInt;
 
                 if (int.TryParse(message,out TempInt) == true)
                 {
@@ -30,9 +30,9 @@ namespace _5._3
                 }
             }
         }
-        static void AddNumber(List<int> dada, string message)
+        static void AddNumber(List<int> numbers, string message)
         {
-            dada.Add(Convert.ToInt32(message));
+            numbers.Add(Convert.ToInt32(message));
         }
 
         static void GetSum(List<int> numbers)
