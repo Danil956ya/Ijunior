@@ -43,8 +43,15 @@ namespace _4._1
             string name = Console.ReadLine();
             Console.WriteLine("введите професиию.");
             string job = Console.ReadLine();
-            dossiers.Add(name, job);
-            Console.Clear();
+
+            if (dossiers.ContainsKey(name))
+            {
+                Console.WriteLine("Имя занято.");
+            }
+            else
+            {
+                dossiers.Add(name, job);
+            }
             return;
         }
         static void OutputDossiers(Dictionary<string, string> dossiers)
@@ -67,13 +74,18 @@ namespace _4._1
         static void DeleteDossiers(Dictionary<string, string> dossiers)
         {
             Console.Clear();
-            Console.WriteLine("Введите имя из доссье.");
+            Console.WriteLine("Введите полное имя из доссье.");
             string input = Console.ReadLine();
 
             if (dossiers.ContainsKey(input))
             {
                 dossiers.Remove(input);
             }
+            else
+            {
+                Console.WriteLine("Досье не найдено.");
+            }
+            
         }
 
     }
