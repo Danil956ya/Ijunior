@@ -9,12 +9,12 @@ namespace _5._5
         {
             int[] firstArray = { 1, 2, 1};
             int[] secondArray = { 3, 2 };
-            List<int> list = new List<int>();
+            List<int> numbers = new List<int>();
 
-            AddToList(list, firstArray.Length, firstArray);
-            AddToList(list, secondArray.Length, secondArray);
+            AddToList(numbers, firstArray.Length, firstArray);
+            AddToList(numbers, secondArray.Length, secondArray);
 
-            foreach (var number in list)
+            foreach (var number in numbers)
             {
                 Console.WriteLine(number);
             }
