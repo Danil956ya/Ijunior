@@ -14,9 +14,9 @@ namespace _5._5
             AddToList(list, firstArray.Length, firstArray);
             AddToList(list, secondArray.Length, secondArray);
 
-            foreach (var item in list)
+            foreach (var number in list)
             {
-                Console.WriteLine(item);
+                Console.WriteLine(number);
             }
         }
 
