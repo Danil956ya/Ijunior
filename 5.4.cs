@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace _4._1
+namespace _5._4
 {
     class Program
     {
@@ -13,24 +13,33 @@ namespace _4._1
             while (isWork)
             {
                 Console.WriteLine("Выбирете пункт. \n1. Добавить досье.\n2. Вывести досье.\n3. Удалить досье.\n4. Выход.");
-                int input = Convert.ToInt32(Console.ReadLine());
+                string input = Console.ReadLine();
 
-                switch (input)
+                if (int.TryParse(input, out int number) == true)
                 {
-                    case 1:
-                        AddDossier(dossiers);
-                        break;
-                    case 2:
-                        OutputDossiers(dossiers);
-                        break;
-                    case 3:
-                        DeleteDossiers(dossiers);
-                        break;
-                    default:
-                        isWork = false;
-                        Console.WriteLine("Пока!");
-                        Console.ReadKey();
-                        break;
+                    switch (number)
+                    {
+                        case 1:
+                            AddDossier(dossiers);
+                            break;
+                        case 2:
+                            OutputDossiers(dossiers);
+                            break;
+                        case 3:
+                            DeleteDossiers(dossiers);
+                            break;
+                        default:
+                            isWork = false;
+                            Console.WriteLine("Пока!");
+                            Console.ReadKey();
+                            break;
+                    }
+
+                }
+                else
+                {
+                    Console.Clear();
+                    Console.WriteLine("Неверная команда.");
                 }
             }
 
@@ -52,8 +61,10 @@ namespace _4._1
             {
                 dossiers.Add(name, job);
             }
+
             return;
         }
+
         static void OutputDossiers(Dictionary<string, string> dossiers)
         {
             Console.Clear();
@@ -85,7 +96,7 @@ namespace _4._1
             {
                 Console.WriteLine("Досье не найдено.");
             }
-            
+
         }
 
     }
