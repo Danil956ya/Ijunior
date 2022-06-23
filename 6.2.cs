@@ -18,18 +18,18 @@ namespace _6._2
         public int PositionX { get; private set; }
         public int PositionY { get; private set; }
 
-        public Player(int x, int y)
+        public Player(int positionX, int positionY)
         {
-            PositionX = x;
-            PositionY = y;
+            PositionX = positionX;
+            PositionY = positionY;
         }
 
     }
     class Renderer
     {
-        public void SetPosition(int x, int y)
+        public void SetPosition(int positionX, int positionY)
         {
-            Console.SetCursorPosition(x, y);
+            Console.SetCursorPosition(positionX, positionY);
             Console.Write("Im here!");
         }
 
