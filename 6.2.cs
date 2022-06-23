@@ -7,21 +7,21 @@ namespace _6._2
         static void Main(string[] args)
         {
             Renderer renderer = new Renderer();
-            Player player = new Player(2, 1);
+            Player player = new Player(2, 3);
 
-            renderer.SetPosition(player.X, player.Y);
+            renderer.SetPosition(player.PositionX, player.PositionY);
 
         }
     }
     class Player
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        public int PositionX { get; private set; }
+        public int PositionY { get; private set; }
 
         public Player(int x, int y)
         {
-            X = x;
-            Y = y;
+            PositionX = x;
+            PositionY = y;
         }
 
     }
