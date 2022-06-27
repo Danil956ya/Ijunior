@@ -44,7 +44,6 @@ namespace _6._3
         private string _nickname;
         private bool _isBanned;
 
-
         public Player(int level = 0, string nickname = "unknown", bool ban = false)
         {
             _level = level;
