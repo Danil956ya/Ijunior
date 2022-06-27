@@ -106,17 +106,24 @@ namespace _6._3
                 Player[] playerArray = _players.ToArray();
                 ShowPlayers();
                 Console.WriteLine("Введите номер игрока.");
-                int inputIndex = Convert.ToInt32(Console.ReadLine());
-                Console.WriteLine("Укажите значение бана (true или false)");
-                string inputStatus = Console.ReadLine();
+                string inputIndex = Console.ReadLine();
+                if (int.TryParse(inputIndex, out int index) && _players.Count > index)
+                {
+                    Console.WriteLine("Укажите значение бана (true или false)");
+                    string inputStatus = Console.ReadLine();
 
-                if(inputStatus == "true")
-                {
-                    playerArray[inputIndex].Ban();
-                }
-                else if(inputStatus == "false")
-                {
-                    playerArray[inputIndex].RemoveBan();
+                    if (inputStatus == "true")
+                    {
+                        playerArray[index].Ban();
+                    }
+                    else if (inputStatus == "false")
+                    {
+                        playerArray[index].RemoveBan();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Некоректно введено значение.");
+                    }
                 }
                 else
                 {
@@ -136,10 +143,10 @@ namespace _6._3
             else
             {
                 Console.Clear();
-                foreach (var player in _players)
+                Player[] players = _players.ToArray();
+                for (int i = 0; i < players.Length; i++)
                 {
-                    int indexPlayer = _players.IndexOf(player);
-                    player.ShowStats(indexPlayer);
+                    players[i].ShowStats(i);
                 }
             }
         }
@@ -148,9 +155,16 @@ namespace _6._3
         {
             Console.WriteLine("Укажите номер игрока.");
             string inputIndex = Console.ReadLine();
-            if (int.TryParse(inputIndex, out int indexPlayer) == true)
+            if (int.TryParse(inputIndex, out int indexPlayer))
             {
-                _players.RemoveAt(indexPlayer);
+                if(_players.Count > indexPlayer)
+                {
+                    _players.RemoveAt(indexPlayer);
+                }
+                else
+                {
+                    Console.WriteLine("Неверно введено значение.");
+                }
             }
             else
             {
