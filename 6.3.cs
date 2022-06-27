@@ -12,7 +12,7 @@ namespace _6._3
 
             while (isWork)
             {
-                Console.WriteLine("Введите номер.\n1. Добавить игрока.\n2. Вывести список игроков.\n3. Убрать бан игрока.\n4. Забанить игрока.\n5. Удалить игрока.");
+                Console.WriteLine("Введите номер.\n1. Добавить игрока.\n2. Вывести список игроков.\n3. Изменить статус бана.\n4. Удалить игрока.");
                 string input = Console.ReadLine();
                 isWork = int.TryParse(input, out int tempInt) == true;
                 switch (input)
@@ -24,12 +24,9 @@ namespace _6._3
                         database.ShowPlayers();
                         break;
                     case "3":
-                        database.RemoveBan();
+                        database.ChangeStatus();
                         break;
                     case "4":
-                        database.AddBan();
-                        break;
-                    case "5":
                         database.DeletePlayer();
                         break;
                     default:
@@ -40,21 +37,15 @@ namespace _6._3
 
         }
     }
+
     class Player
     {
         private int _level;
         private string _nickname;
         private bool _isBanned;
 
-        public bool IsBanned
-        {
-            set
-            {
-                _isBanned = value;
-            }
-        }
 
-        public Player(int level, string nickname, bool ban)
+        public Player(int level = 0, string nickname = "unknown", bool ban = false)
         {
             _level = level;
             _nickname = nickname;
@@ -65,12 +56,20 @@ namespace _6._3
         {
             Console.WriteLine("{3}) Ник - {0}. Уровень - {1}. Статус бана - {2}", _nickname, _level, _isBanned, id);
         }
+        public void RemoveBan()
+        {
+            _isBanned = false;
+        }
+        public void Ban()
+        {
+            _isBanned = true;
+        }
 
     }
 
     class Вatabase
     {
-        private List<Player> players = new List<Player>();
+        private List<Player> _players = new List<Player>();
 
         public void AddPlayer()
         {
@@ -81,70 +80,56 @@ namespace _6._3
             string inputLevel = Console.ReadLine();
             Console.WriteLine("Укажите забанен ли игрок? (y/n)");
             string inputBan = Console.ReadLine();
+
             bool isBanned = inputBan == "y" ? true : false;
 
             if (int.TryParse(inputLevel, out int level) == true)
             {
-                players.Add(new Player(level, nickname, isBanned));
+                _players.Add(new Player(level, nickname, isBanned));
             }
             else
             {
                 Console.WriteLine("Неверно введены значения.");
             }
+
             Console.Clear();
         }
 
-        public void RemoveBan()
+        public void ChangeStatus()
         {
-            if (players.Count <= 0)
+            if (_players.Count <= 0)
             {
                 Console.Clear();
                 Console.WriteLine("Список пуст.");
             }
             else
             {
+                Player[] playerArray = _players.ToArray();
+                ShowPlayers();
                 Console.WriteLine("Введите номер игрока.");
-                string id = Console.ReadLine();
+                int inputIndex = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Укажите значение бана (true или false)");
+                string inputStatus = Console.ReadLine();
 
-                if (int.TryParse(id, out int idPlayer) == true)
+                if(inputStatus == "true")
                 {
-                    Player[] playersMas = players.ToArray();
-                    playersMas[idPlayer].IsBanned = playersMas[idPlayer].IsBanned = false;
+                    playerArray[inputIndex].Ban();
+                }
+                else if(inputStatus == "false")
+                {
+                    playerArray[inputIndex].RemoveBan();
                 }
                 else
                 {
-                    Console.WriteLine("Неверно введены значения.");
+                    Console.WriteLine("Некоректно введено значение.");
                 }
-            }
-        }
 
-        public void AddBan()
-        {
-            if (players.Count <= 0)
-            {
-                Console.Clear();
-                Console.WriteLine("Список пуст.");
-            }
-            else
-            {
-                Console.WriteLine("Введите номер игрока.");
-                string id = Console.ReadLine();
-
-                if (int.TryParse(id, out int idPlayer) == true)
-                {
-                    Player[] playersArray = players.ToArray();
-                    playersArray[idPlayer].IsBanned = playersArray[idPlayer].IsBanned = true;
-                }
-                else
-                {
-                    Console.WriteLine("Неверно введены значения.");
-                }
             }
         }
 
         public void ShowPlayers()
         {
-            if (players.Count <= 0)
+            if (_players.Count <= 0)
             {
                 Console.Clear();
                 Console.WriteLine("Список пуст.");
@@ -152,9 +137,9 @@ namespace _6._3
             else
             {
                 Console.Clear();
-                foreach (var player in players)
+                foreach (var player in _players)
                 {
-                    int indexPlayer = players.IndexOf(player);
+                    int indexPlayer = _players.IndexOf(player);
                     player.ShowStats(indexPlayer);
                 }
             }
@@ -166,7 +151,7 @@ namespace _6._3
             string inputIndex = Console.ReadLine();
             if (int.TryParse(inputIndex, out int indexPlayer) == true)
             {
-                players.RemoveAt(indexPlayer);
+                _players.RemoveAt(indexPlayer);
             }
             else
             {
