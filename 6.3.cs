@@ -44,25 +44,33 @@ namespace _6._3
     {
         private int _level;
         private string _nickname;
-        public bool isBanned;
+        private bool _isBanned;
+
+        public bool IsBanned
+        {
+            set
+            {
+                _isBanned = value;
+            }
+        }
 
         public Player(int level, string nickname, bool ban)
         {
             _level = level;
             _nickname = nickname;
-            isBanned = ban;
+            _isBanned = ban;
         }
 
         public void ShowStats(int id)
         {
-            Console.WriteLine("{3}) Ник - {0}. Уровень - {1}. Статус бана - {2}", _nickname, _level, isBanned, id);
+            Console.WriteLine("{3}) Ник - {0}. Уровень - {1}. Статус бана - {2}", _nickname, _level, _isBanned, id);
         }
 
     }
 
     class Вatabase
     {
-        List<Player> players = new List<Player>();
+        private List<Player> players = new List<Player>();
 
         public void AddPlayer()
         {
@@ -101,7 +109,7 @@ namespace _6._3
                 if (int.TryParse(id, out int idPlayer) == true)
                 {
                     Player[] playersMas = players.ToArray();
-                    playersMas[idPlayer].isBanned = playersMas[idPlayer].isBanned = false;
+                    playersMas[idPlayer].IsBanned = playersMas[idPlayer].IsBanned = false;
                 }
                 else
                 {
@@ -125,7 +133,7 @@ namespace _6._3
                 if (int.TryParse(id, out int idPlayer) == true)
                 {
                     Player[] playersArray = players.ToArray();
-                    playersArray[idPlayer].isBanned = playersArray[idPlayer].isBanned = true;
+                    playersArray[idPlayer].IsBanned = playersArray[idPlayer].IsBanned = true;
                 }
                 else
                 {
@@ -155,15 +163,16 @@ namespace _6._3
         public void DeletePlayer()
         {
             Console.WriteLine("Укажите номер игрока.");
-            string id = Console.ReadLine();
-            if (int.TryParse(id, out int idPlayer) == true)
+            string inputIndex = Console.ReadLine();
+            if (int.TryParse(inputIndex, out int indexPlayer) == true)
             {
-                players.RemoveAt(idPlayer);
+                players.RemoveAt(indexPlayer);
             }
             else
             {
                 Console.WriteLine("Неверно введены значения.");
             }
         }
+
     }
 }
