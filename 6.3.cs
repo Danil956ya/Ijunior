@@ -14,7 +14,7 @@ namespace _6._3
             {
                 Console.WriteLine("Введите номер.\n1. Добавить игрока.\n2. Вывести список игроков.\n3. Изменить статус бана.\n4. Удалить игрока.");
                 string input = Console.ReadLine();
-                isWork = int.TryParse(input, out int tempInt) == true;
+                isWork = int.TryParse(input, out int tempInt);
                 switch (input)
                 {
                     case "1":
@@ -103,22 +103,26 @@ namespace _6._3
             }
             else
             {
+
                 Player[] playerArray = _players.ToArray();
+                string inputIndex;
+                int result;
                 ShowPlayers();
-                Console.WriteLine("Введите номер игрока.");
-                string inputIndex = Console.ReadLine();
-                if (int.TryParse(inputIndex, out int index) && _players.Count > index)
+                Console.WriteLine("Укажите номер игрока.");
+                bool tryGetPlayer = TryGetPlayer(out inputIndex, out result);
+
+                if (tryGetPlayer)
                 {
                     Console.WriteLine("Укажите значение бана (true или false)");
                     string inputStatus = Console.ReadLine();
 
                     if (inputStatus == "true")
                     {
-                        playerArray[index].Ban();
+                        playerArray[result].Ban();
                     }
                     else if (inputStatus == "false")
                     {
-                        playerArray[index].RemoveBan();
+                        playerArray[result].RemoveBan();
                     }
                     else
                     {
@@ -153,23 +157,56 @@ namespace _6._3
 
         public void DeletePlayer()
         {
-            Console.WriteLine("Укажите номер игрока.");
-            string inputIndex = Console.ReadLine();
-            if (int.TryParse(inputIndex, out int indexPlayer))
+            string inputIndex;
+            int result;
+            if (_players.Count > 0)
             {
-                if(_players.Count > indexPlayer)
+                ShowPlayers();
+                Console.WriteLine("Укажите номер игрока.");
+                bool tryGetPlayer = TryGetPlayer(out inputIndex, out result);
+
+                if (tryGetPlayer)
                 {
-                    _players.RemoveAt(indexPlayer);
+                    if (_players.Count > result)
+                    {
+                        _players.RemoveAt(result);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Неверно введено значение.");
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("Неверно введено значение.");
+                    Console.WriteLine("Неверно введены значения.");
                 }
             }
             else
             {
-                Console.WriteLine("Неверно введены значения.");
+                Console.Clear();
+                Console.WriteLine("Список пуст.");
             }
+
+        }
+
+        private bool TryGetPlayer(out string userInput, out int result)
+        {
+            int playersCount = _players.Count - 1;
+            userInput = " ";
+            result = 0;
+            userInput = Console.ReadLine();
+            bool isGetPlayer = int.TryParse(userInput, out result);
+
+            if (playersCount >= result)
+            {
+                return isGetPlayer;
+            }
+            else
+            {
+                isGetPlayer = false;
+                return isGetPlayer;
+            }
+
         }
 
     }
