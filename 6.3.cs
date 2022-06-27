@@ -197,7 +197,7 @@ namespace _6._3
             userInput = Console.ReadLine();
             bool isGetPlayer = int.TryParse(userInput, out result);
 
-            if (playersCount >= result)
+            if (playersCount >= result && result >= 0)
             {
                 return isGetPlayer;
             }
