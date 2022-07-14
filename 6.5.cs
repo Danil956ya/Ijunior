@@ -25,7 +25,7 @@ namespace _6._5
                         bookStorage.ShowAllBooks();
                         break;
                     case "4":
-                        bookStorage.FindBook();
+                        bookStorage.GetBooksCategory();
                         break;
                     case "5":
                         isWork = false;
@@ -45,18 +45,18 @@ namespace _6._5
     {
         public string Name { get; private set; }
         public string Autor { get; private set; }
-        public int BookRelese { get; private set; }
+        public int ReleseDate { get; private set; }
 
         public Book(string name = "default", string autorh = "default", int year = 0)
         {
             Name = name;
             Autor = autorh;
-            BookRelese = year;
+            ReleseDate = year;
         }
 
         public void ShowInfo()
         {
-            Console.WriteLine($"|| Название: '{Name}'. || Автор: {Autor}. || Год выпуска: {BookRelese}. ||");
+            Console.WriteLine($"|| Название: '{Name}'. || Автор: {Autor}. || Год выпуска: {ReleseDate}. ||");
         }
 
     }
@@ -91,7 +91,7 @@ namespace _6._5
             {
                 Console.WriteLine("Укажите номер книги, которую нужно удалить");
                 string input = Console.ReadLine();
-                if(int.TryParse(input,out int result) && result >= 1)
+                if(int.TryParse(input,out int result) && result >= 1 && result <= _books.Count)
                 {
                     _books.RemoveAt(result - 1);
                 }
@@ -129,7 +129,7 @@ namespace _6._5
 
         }
 
-        public void FindBook()
+        public void GetBooksCategory()
         {
             Console.Clear();
             Console.WriteLine("Укажите по какой категории искать? \n1. Название. \n2. Автор. \n3. Год.");
@@ -178,7 +178,7 @@ namespace _6._5
         {
             foreach (var book in _books)
             {
-                if (book.BookRelese.ToString().Contains(input))
+                if (book.ReleseDate.ToString().Contains(input))
                 {
                     book.ShowInfo();
                 }
