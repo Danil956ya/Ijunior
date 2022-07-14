@@ -37,7 +37,9 @@ namespace _6._5
                 }
 
             }
+
         }
+
     }
     class Book
     {
@@ -51,14 +53,18 @@ namespace _6._5
             Autor = autorh;
             BookRelese = year;
         }
+
         public void ShowInfo()
         {
             Console.WriteLine($"|| Название: '{Name}'. || Автор: {Autor}. || Год выпуска: {BookRelese}. ||");
         }
+
     }
     class BookStorage
     {
+
         private List<Book> _books = new List<Book>();
+
         public void AddBook()
         {
             Console.WriteLine("Укажите название.");
@@ -77,6 +83,7 @@ namespace _6._5
                 Console.WriteLine("Повторите попытку.");
             }
         }
+
         public void RemoveBook()
         {
             ShowAllBooks();
@@ -98,10 +105,13 @@ namespace _6._5
                 Console.Clear();
                 Console.WriteLine("Список пуст");
             }
+
         }
+
         public void ShowAllBooks()
         {
             Console.Clear();
+
             if (_books.Count > 0)
             {
                 int number = 0;
@@ -116,7 +126,9 @@ namespace _6._5
             {
                 Console.WriteLine("Список пуст");
             }
+
         }
+
         public void FindBook()
         {
             Console.Clear();
@@ -128,34 +140,50 @@ namespace _6._5
             switch (value)
             {
                 case "1":
-                    foreach (var book in _books)
-                    {
-                        if (book.Name.Contains(input))
-                        {
-                            book.ShowInfo();
-                        }
-                    }
+                    FindOFName(input);
                     break;
                 case "2":
-                    foreach (var book in _books)
-                    {
-                        if (book.Autor.Contains(input))
-                        {
-                            book.ShowInfo();
-                        }
-                    }
+                    FindOFAutor(input);
                     break;
                 case "3":
-                    foreach (var book in _books)
-                    {
-                        if (book.BookRelese.ToString().Contains(input))
-                        {
-                            book.ShowInfo();
-                        }
-                    }
+                    FindOfYear(input);
                     break;
             }
 
         }
+
+        public void FindOFName(string input)
+        {
+            foreach (var book in _books)
+            {
+                if (book.Name.Contains(input))
+                {
+                    book.ShowInfo();
+                }
+            }
+        }
+
+        public void FindOFAutor(string input)
+        {
+            foreach (var book in _books)
+            {
+                if (book.Autor.Contains(input))
+                {
+                    book.ShowInfo();
+                }
+            }
+        }
+
+        public void FindOfYear(string input)
+        {
+            foreach (var book in _books)
+            {
+                if (book.BookRelese.ToString().Contains(input))
+                {
+                    book.ShowInfo();
+                }
+            }
+        }
+
     }
 }
