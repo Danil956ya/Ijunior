@@ -9,11 +9,12 @@ namespace _6._6
         {
             Traider traider = new Traider();
             Player player = new Player();
+            bool isWork = true;
             traider.AddItems();
 
-            while (true)
+            while (isWork)
             {
-                Console.WriteLine("Выбирете команду. 1.Показать предметы у торговца. 2.Купить предмет 3.Показать купленое.");
+                Console.WriteLine("Выбирете команду. 1.Показать предметы у торговца. 2.Купить предмет 3.Показать купленое. 4. Выход.");
                 string input = Console.ReadLine();
                 switch (input)
                 {
@@ -26,6 +27,13 @@ namespace _6._6
                     case "3":
                         player.ShowBackpack();
                         break;
+                    case "4":
+                        isWork = false;
+                        break;
+                    default:
+                        Console.Clear();
+                        Console.WriteLine("Неверный ввод");
+                        break;
                 }
             }
         }
@@ -33,35 +41,36 @@ namespace _6._6
 
     class Player
     {
-        private List<Product> _inBackpack = new List<Product>();
+        private List<Product> _items = new List<Product>();
         public void BuyItem(Traider traider)
         {
             if (traider.ProductsCount() > 0)
             {
                 traider.ShowItems();
                 Console.WriteLine("Выбирете продукт.");
-                int input = Convert.ToInt32(Console.ReadLine());
-                if (traider.CanSell(input, traider.ProductsCount(),out Product product))
+                string input = Console.ReadLine();
+                if (int.TryParse(input, out int result) && traider.CanSell(result, traider.ProductsCount(),out Product product))
                 {
-                    _inBackpack.Add(product);
-                    traider.SellItem(input);
+                    _items.Add(product);
+                    traider.SellItem(result);
                 }
             }
             else
             {
+                Console.Clear();
                 Console.WriteLine("У продавца закончились предметы.");
             }
         }
 
         public void ShowBackpack()
         {
-            if (_inBackpack.Count > 0)
+            if (_items.Count > 0)
             {
                 Console.Clear();
                 Console.WriteLine("В вашеи рюкзаке:");
-                foreach (var item in _inBackpack)
+                foreach (var item in _items)
                 {
-                    item.ShowInfo();
+                    item.ShowInfoInInventory();
                 }
             }
             else
@@ -70,6 +79,7 @@ namespace _6._6
                 Console.WriteLine("В рюкзаке пусто.");
             }
         }
+
     }
 
     class Traider
@@ -148,9 +158,16 @@ namespace _6._6
             Name = name;
             Price = price;
         }
+
         public void ShowInfo()
         {
             Console.WriteLine($"Название: {Name}. Цена - {Price}");
         }
+
+        public void ShowInfoInInventory()
+        {
+            Console.WriteLine($"Название: {Name}.");
+        }
+
     }
 }
