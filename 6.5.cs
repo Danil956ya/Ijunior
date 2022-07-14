@@ -25,7 +25,7 @@ namespace _6._5
                         bookStorage.ShowAllBooks();
                         break;
                     case "4":
-                        bookStorage.GetBooksCategory();
+                        bookStorage.ShowBooksCategory();
                         break;
                     case "5":
                         isWork = false;
@@ -129,7 +129,7 @@ namespace _6._5
 
         }
 
-        public void GetBooksCategory()
+        public void ShowBooksCategory()
         {
             Console.Clear();
             Console.WriteLine("Укажите по какой категории искать? \n1. Название. \n2. Автор. \n3. Год.");
@@ -140,19 +140,19 @@ namespace _6._5
             switch (value)
             {
                 case "1":
-                    FindOFName(input);
+                    ShowName(input);
                     break;
                 case "2":
-                    FindOFAutor(input);
+                    ShowAutor(input);
                     break;
                 case "3":
-                    FindOfYear(input);
+                    ShowRelese(input);
                     break;
             }
 
         }
 
-        public void FindOFName(string input)
+        public void ShowName(string input)
         {
             foreach (var book in _books)
             {
@@ -163,7 +163,7 @@ namespace _6._5
             }
         }
 
-        public void FindOFAutor(string input)
+        public void ShowAutor(string input)
         {
             foreach (var book in _books)
             {
@@ -174,7 +174,7 @@ namespace _6._5
             }
         }
 
-        public void FindOfYear(string input)
+        public void ShowRelese(string input)
         {
             foreach (var book in _books)
             {
