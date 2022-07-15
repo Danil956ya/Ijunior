@@ -19,13 +19,13 @@ namespace _6._6
                 switch (input)
                 {
                     case "1":
-                        traider.ShowItems();
+                        traider.ShowTraiderItems();
                         break;
                     case "2":
                         player.BuyItem(traider);
                         break;
                     case "3":
-                        player.ShowBackpack();
+                        player.ShowPlayerItems();
                         break;
                     case "4":
                         isWork = false;
@@ -39,14 +39,14 @@ namespace _6._6
         }
     }
 
-    class Player
+    class Player : Inventory
     {
         private List<Product> _items = new List<Product>();
         public void BuyItem(Traider traider)
         {
             if (traider.ProductsCount() > 0)
             {
-                traider.ShowItems();
+                traider.ShowTraiderItems();
                 Console.WriteLine("Выбирете продукт.");
                 string input = Console.ReadLine();
                 if (int.TryParse(input, out int result) && traider.CanSell(result, traider.ProductsCount(),out Product product))
@@ -62,48 +62,20 @@ namespace _6._6
             }
         }
 
-        public void ShowBackpack()
+        public void ShowPlayerItems()
         {
-            if (_items.Count > 0)
-            {
-                Console.Clear();
-                Console.WriteLine("В вашеи рюкзаке:");
-                foreach (var item in _items)
-                {
-                    item.ShowInfoInInventory();
-                }
-            }
-            else
-            {
-                Console.Clear();
-                Console.WriteLine("В рюкзаке пусто.");
-            }
+            base.ShowItems(_items);
         }
 
     }
 
-    class Traider
+    class Traider : Inventory
     {
         private List<Product> _products = new List<Product>();
 
-        public void ShowItems()
+        public void ShowTraiderItems()
         {
-            Console.Clear();
-            if (_products.Count > 0)
-            {
-                int numberItem = 0;
-                foreach (var product in _products)
-                {
-                    numberItem++;
-                    Console.Write(numberItem + ") ");
-                    product.ShowInfo();
-                }
-            }
-            else
-            {
-                Console.WriteLine("У продавца закончились предметы.");
-            }
-
+            base.ShowItems(_products);
         }
 
         public void AddItems()
@@ -170,4 +142,28 @@ namespace _6._6
         }
 
     }
+
+    class Inventory
+    { 
+        public virtual void ShowItems(List<Product> products)
+        {
+            Console.Clear();
+            if (products.Count > 0)
+            {
+                int numberItem = 0;
+                foreach (var product in products)
+                {
+                    numberItem++;
+                    Console.Write(numberItem + ") ");
+                    product.ShowInfo();
+                }
+            }
+            else
+            {
+                Console.WriteLine("Нету предметов.");
+            }
+        }
+    
+    }
+
 }
