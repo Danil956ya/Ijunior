@@ -39,7 +39,7 @@ namespace _6._6
         }
     }
 
-    class Player : Inventory
+    class Player : Human
     {
         private int _money;
 
@@ -65,7 +65,7 @@ namespace _6._6
             else
             {
                 Console.Clear();
-                BagIsEmpty();
+                IsEmpty();
             }
         }
 
@@ -77,7 +77,7 @@ namespace _6._6
 
     }
 
-    class Traider : Inventory
+    class Traider : Human
     {
         public Traider()
         {
@@ -121,7 +121,6 @@ namespace _6._6
 
         public int ProductPrice(int index)
         {
-
             int price = Bag[index - 1].Price;
             return price;
         }
@@ -146,9 +145,9 @@ namespace _6._6
 
     }
 
-    class Inventory
+    class Human
     {
-        public List<Product> Bag = new List<Product>();
+        protected List<Product> Bag = new List<Product>();
 
         public void ShowItems()
         {
@@ -165,11 +164,11 @@ namespace _6._6
             }
             else
             {
-                BagIsEmpty();
+                IsEmpty();
             }
         }
 
-        public void BagIsEmpty()
+        public void IsEmpty()
         {
             Console.WriteLine("Нету предметов.");
         }
