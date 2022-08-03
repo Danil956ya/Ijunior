@@ -50,14 +50,14 @@ namespace _6._6
 
         public void BuyItem(Traider traider)
         {
-            if (traider.ProductsCount() > 0)
+            if (traider.ToCount() > 0)
             {
                 traider.ShowItems();
                 Console.WriteLine("Выбирете продукт.");
                 string input = Console.ReadLine();
-                if (int.TryParse(input, out int result) && traider.CanSell(result, traider.ProductsCount(),out Product product) && traider.ProductPrice(result) <= _money)
+                if (int.TryParse(input, out int result) && traider.CanSell(result, traider.ToCount(),out Product product) && traider.GetPrice(result) <= _money)
                 {
-                    _money -= traider.ProductPrice(result);
+                    _money -= traider.GetPrice(result);
                     Bag.Add(product);
                     traider.SellItem(result);
                 }
@@ -113,13 +113,13 @@ namespace _6._6
             return canSell;
         }
 
-        public int ProductsCount()
+        public int GetCount()
         {
             int Count = Bag.Count;
             return Count;
         }
 
-        public int ProductPrice(int index)
+        public int GetPrice(int index)
         {
             int price = Bag[index - 1].Price;
             return price;
