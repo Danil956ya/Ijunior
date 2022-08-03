@@ -10,23 +10,22 @@ namespace _6._6
             Traider traider = new Traider();
             Player player = new Player();
             bool isWork = true;
-            traider.AddItems();
-            player.AddMoney();
 
             while (isWork)
             {
+                Console.WriteLine("Ваш счёт: " + player.GetMoney());
                 Console.WriteLine("Выбирете команду. 1.Показать предметы у торговца. 2.Купить предмет 3.Показать купленое. 4. Выход.");
                 string input = Console.ReadLine();
                 switch (input)
                 {
                     case "1":
-                        traider.ShowTraiderItems();
+                        traider.ShowItems();
                         break;
                     case "2":
                         player.BuyItem(traider);
                         break;
                     case "3":
-                        player.ShowPlayerItems();
+                        player.ShowItems();
                         break;
                     case "4":
                         isWork = false;
@@ -42,64 +41,58 @@ namespace _6._6
 
     class Player : Inventory
     {
-        //private List<Product> _items = new List<Product>();
-        public int Money { get; private set; }
+        private int _money;
+
+        public Player()
+        {
+            _money = 150;
+        }
+
         public void BuyItem(Traider traider)
         {
             if (traider.ProductsCount() > 0)
             {
-                traider.ShowTraiderItems();
+                traider.ShowItems();
                 Console.WriteLine("Выбирете продукт.");
                 string input = Console.ReadLine();
-
-                if (int.TryParse(input, out int result) && traider.CanSell(result, traider.ProductsCount(), out Product product))
+                if (int.TryParse(input, out int result) && traider.CanSell(result, traider.ProductsCount(),out Product product) && traider.ProductPrice(result) <= _money)
                 {
-                    PlayerBag.Add(product);
+                    _money -= traider.ProductPrice(result);
+                    Bag.Add(product);
                     traider.SellItem(result);
                 }
             }
             else
             {
                 Console.Clear();
-                Console.WriteLine("У продавца закончились предметы.");
+                BagIsEmpty();
             }
         }
 
-        public void AddMoney()
+        public int GetMoney()
         {
-            Money = 150;
+            int Money = _money;
+            return Money;
         }
 
-        public void ShowPlayerItems()
-        {
-            base.ShowItems(PlayerBag);
-        }
-        
     }
 
     class Traider : Inventory
     {
-       // private List<Product> _products = new List<Product>();
-
-        public void ShowTraiderItems()
+        public Traider()
         {
-            base.ShowItems(TraiderBag);
-        }
-
-        public void AddItems()
-        {
-            TraiderBag.Add(new Product("Зелье", 2));
-            TraiderBag.Add(new Product("Меч", 5));
-            TraiderBag.Add(new Product("Броня", 15));
-            TraiderBag.Add(new Product("Поножи", 5));
-            TraiderBag.Add(new Product("Рукавицы", 5));
+            Bag.Add(new Product("Зелье", 2));
+            Bag.Add(new Product("Меч", 5));
+            Bag.Add(new Product("Броня", 15));
+            Bag.Add(new Product("Поножи", 5));
+            Bag.Add(new Product("Рукавицы", 5));
         }
 
         public void SellItem(int index)
         {
-            if (CanSell(index, TraiderBag.Count, out Product product))
+            if (CanSell(index, Bag.Count, out Product product))
             {
-                TraiderBag.Remove(product);
+                Bag.Remove(product);
                 Console.Clear();
             }
         }
@@ -108,9 +101,9 @@ namespace _6._6
         {
             bool canSell = index <= count && index > 0;
 
-            if (canSell)
+            if(canSell)
             {
-                product = TraiderBag[index - 1];
+                product = Bag[index - 1];
             }
             else
             {
@@ -122,8 +115,15 @@ namespace _6._6
 
         public int ProductsCount()
         {
-            int count = TraiderBag.Count;
-            return count;
+            int Count = Bag.Count;
+            return Count;
+        }
+
+        public int ProductPrice(int index)
+        {
+
+            int price = Bag[index - 1].Price;
+            return price;
         }
 
     }
@@ -144,26 +144,19 @@ namespace _6._6
             Console.WriteLine($"Название: {Name}. Цена - {Price}");
         }
 
-        public void ShowInfoInInventory()
-        {
-            Console.WriteLine($"Название: {Name}.");
-        }
-
     }
 
     class Inventory
     {
-        public List<Product> TraiderBag = new List<Product>();
-        public List<Product> PlayerBag = new List<Product>();
+        public List<Product> Bag = new List<Product>();
 
-        public virtual void ShowItems(List<Product> products)
+        public void ShowItems()
         {
-
             Console.Clear();
-            if (products.Count > 0)
+            if (Bag.Count > 0)
             {
                 int numberItem = 0;
-                foreach (var product in products)
+                foreach (var product in Bag)
                 {
                     numberItem++;
                     Console.Write(numberItem + ") ");
@@ -172,11 +165,15 @@ namespace _6._6
             }
             else
             {
-                Console.WriteLine("Нету предметов.");
+                BagIsEmpty();
             }
-
         }
 
+        public void BagIsEmpty()
+        {
+            Console.WriteLine("Нету предметов.");
+        }
+    
     }
 
 }
