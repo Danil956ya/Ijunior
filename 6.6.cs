@@ -37,6 +37,7 @@ namespace _6._6
                 }
             }
         }
+
     }
 
     class Player : Human
