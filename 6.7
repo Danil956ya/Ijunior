@@ -1,0 +1,79 @@
+class Program
+{
+    static void Main(string[] args)
+    {
+        Direction direction = new Direction();
+        bool isWork = true;
+        while (isWork)
+        {
+            direction.ShowStations();
+            direction.SetDirection();
+            Console.ReadKey();
+
+        }
+    }
+}
+
+class Direction
+{
+    private List<Station> _stations = new List<Station>();
+    public Direction()
+    {
+        _stations.Add(new Station("Курская"));
+        _stations.Add(new Station("Серп и Молот"));
+        _stations.Add(new Station("Карачарово"));
+        _stations.Add(new Station("Чухлинка"));
+        _stations.Add(new Station("Кусково"));
+        _stations.Add(new Station("Новогиреево"));
+        _stations.Add(new Station("Реутов"));
+        _stations.Add(new Station("Никольское"));
+        _stations.Add(new Station("Салтыковская"));
+        _stations.Add(new Station("Кучино"));
+        _stations.Add(new Station("Ольгино"));
+        _stations.Add(new Station("Железнодорожный"));
+    }
+    public void ShowStations()
+    {
+        foreach (var station in _stations)
+        {
+            Console.WriteLine(station.Name);
+        }
+    }
+    public void SetDirection()
+    {
+        Console.WriteLine("Укажите откуда хотите ехать.");
+        var firststation = GetStation(Console.ReadLine());
+        Console.WriteLine("Укажите куда хотите ехать.");
+        var laststation = GetStation(Console.ReadLine());
+        Console.WriteLine($"Направление: {firststation} - {laststation}.");
+    }
+    private string GetStation(string input)
+    {
+        string NeedStation = "default";
+        foreach(var station in _stations)
+        {
+            if(station.Name.Contains(input))
+            {
+                NeedStation = station.Name;
+            }
+        }
+        return NeedStation;
+    }
+}
+class Station
+{
+    public string Name { get; private set; }
+    public int Price { get; private set; }
+
+    public Station(string name)
+    {
+        Name = name;
+        Price = 2;
+    }
+}
+class Train : Direction
+{
+    int Seats;
+    int Cars;
+    bool isOcupped;
+}
