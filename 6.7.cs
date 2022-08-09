@@ -22,6 +22,10 @@ class Program
                     train.OcupSeats();
                     break;
                 case "4":
+                    direction.SendTrain();
+                    break;
+                case"5":
+                    train.ShowCars();
                     break;
                 default:
                     Console.WriteLine("Неверная команда.");
@@ -33,10 +37,10 @@ class Program
     }
 }
 
-class Direction
+class Direction : Train
 {
     private List<Station> _stations = new List<Station>();
-    public bool isCreate { get; private set; }
+    public static bool isCreate { get; private set; }
     string firstStation;
     string lastStation;
     public Direction()
@@ -94,6 +98,7 @@ class Direction
             Console.WriteLine($"Направление: {firstStation} - {lastStation}.");
         }
     }
+
     private string GetStation(string input)
     {
         string Station = "default";
@@ -113,6 +118,19 @@ class Direction
         }
         return Station;
     }
+
+    public override void SendTrain()
+    {
+        if (isCreate && isFull && isSelling)
+        {
+            isCreate = false;
+            base.SendTrain();
+        }
+        else
+        {
+            Console.WriteLine("Выполнены не все условия.");
+        }
+    }
 }
 class Station
 {
@@ -127,7 +145,7 @@ class Ticet
 {
     public static int count { get; private set; }
     Random rnd = new Random();
-    bool isSelling;
+    protected static bool isSelling;
 
     public void SellTicets()
     {
@@ -168,14 +186,14 @@ class Seat : Ticet
 }
 class Train : Ticet
 {
-    protected List<Seat> _seats = new List<Seat>();
-    int countSeats = 30;
-    int Cars = 1;
-    bool isFull;
+    protected static List<Seat> _seats = new List<Seat>();
+    static int countSeats = 30;
+    public static int cars { get; private set; }
+    public static bool isFull { get; private set; }
 
     public void OcupSeats()
     {
-        if (count > 0)
+        if (isSelling)
         {
             if (!isFull)
             {
@@ -194,7 +212,7 @@ class Train : Ticet
             else
             {
                 Console.Clear();
-                Console.WriteLine($"поезд сформирован. Собрано {Cars} вагонов");
+                Console.WriteLine($"Поезд сформирован. Собрано {cars} вагонов");
             }
         }
         else
@@ -203,15 +221,21 @@ class Train : Ticet
             Console.WriteLine("Сначала продайте билеты.");
         }
     }
-    public int CarSeats()
+
+    private int CarSeats()
     {
         int seats = 30;
         if (count > countSeats)
         {
-            Cars += 1;
-            countSeats = Cars * seats;
+            cars += 1;
+            countSeats = cars * seats;
         }
         return countSeats;
+    }
+
+    private void ShowSeats()
+    {
+        Console.WriteLine(countSeats.ToString());
     }
     public void AddSeats()
     {
@@ -220,4 +244,22 @@ class Train : Ticet
             _seats.Add(new Seat(i + 1));
         }
     }
+    public void ShowCars()
+    {
+        Console.WriteLine(cars.ToString());
+        ShowSeats();
+    }
+
+    public virtual void SendTrain()
+    {
+        Console.Clear();
+        _seats.Clear();
+        isFull = false;
+        isSelling = false;
+        //cars = 1;
+        //countSeats = 30;
+        Console.WriteLine("Поезд отправлен.");
+    }
+
 }
+
