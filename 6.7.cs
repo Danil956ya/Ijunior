@@ -21,6 +21,11 @@ class Program
                 case "3":
                     train.OcupSeats();
                     break;
+                case "4":
+                    break;
+                default:
+                    Console.WriteLine("Неверная команда.");
+                    break;
 
             }
 
@@ -120,7 +125,7 @@ class Station
 }
 class Ticet
 {
-    public int count { get; private set; }
+    public static int count { get; private set; }
     Random rnd = new Random();
     bool isSelling;
 
@@ -140,6 +145,7 @@ class Ticet
             Console.WriteLine($"Продано {count} билетов.");
         }
     }
+
 }
 class Seat : Ticet
 {
@@ -164,27 +170,54 @@ class Train : Ticet
 {
     protected List<Seat> _seats = new List<Seat>();
     int countSeats = 30;
-    int Cars;
+    int Cars = 1;
+    bool isFull;
 
     public void OcupSeats()
     {
-        for (int i = 0; i < countSeats; i++)
+        if (count > 0)
         {
-            _seats.Add(new Seat(i));
-        }
-        for (int i = 0; i < count; i++)
-        {
-            _seats[i].number = i + 1;
-            _seats[i].IsOcupped = true;
-            if(count > countSeats)
+            if (!isFull)
             {
-                Cars++;
-                _seats[i].IsOcupped = true;
+                AddSeats();
+                for (int i = 0; i < count; i++)
+                {
+                    _seats[i].number = i + 1;
+                    _seats[i].IsOcupped = true;
+                }
+                foreach (var seat in _seats)
+                {
+                    seat.ShowInfo();
+                }
+                isFull = true;
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine($"поезд сформирован. Собрано {Cars} вагонов");
             }
         }
-        foreach (var seat in _seats)
+        else
         {
-            seat.ShowInfo();
+            Console.Clear();
+            Console.WriteLine("Сначала продайте билеты.");
+        }
+    }
+    public int CarSeats()
+    {
+        int seats = 30;
+        if (count > countSeats)
+        {
+            Cars += 1;
+            countSeats = Cars * seats;
+        }
+        return countSeats;
+    }
+    public void AddSeats()
+    {
+        for (int i = 0; i < CarSeats(); i++)
+        {
+            _seats.Add(new Seat(i + 1));
         }
     }
 }
