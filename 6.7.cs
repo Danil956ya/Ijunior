@@ -16,8 +16,10 @@ class Program
                     direction.SetDirection();
                     break;
                 case "2":
-                    direction.ShowDirection();
                     ticet.SellTicets();
+                    break;
+                case "3":
+                    train.OcupSeats();
                     break;
 
             }
@@ -120,12 +122,23 @@ class Ticet
 {
     public int count { get; private set; }
     Random rnd = new Random();
+    bool isSelling;
 
     public void SellTicets()
     {
-        Console.Clear();
-        count = rnd.Next(0, 31);
-        Console.WriteLine($"Было продано {count} билетов.");
+        if (!isSelling)
+        {
+            Console.Clear();
+            count = rnd.Next(25, 101);
+            Console.WriteLine($"Было продано {count} билетов.");
+            isSelling = true;
+        }
+        else
+        {
+            Console.Clear();
+            Console.WriteLine("Билеты проданы.");
+            Console.WriteLine($"Продано {count} билетов.");
+        }
     }
 }
 class Seat : Ticet
@@ -138,7 +151,7 @@ class Seat : Ticet
     }
     private string mes()
     {
-        string mesag = IsOcupped ? "zanyato" : "svobodno";
+        string mesag = IsOcupped ? $"{number}) Место занято." : $"{number}) Место свободно.";
         return mesag;
     }
     public void ShowInfo()
@@ -155,14 +168,19 @@ class Train : Ticet
 
     public void OcupSeats()
     {
-        SellTicets();
         for (int i = 0; i < countSeats; i++)
         {
             _seats.Add(new Seat(i));
         }
         for (int i = 0; i < count; i++)
         {
+            _seats[i].number = i + 1;
             _seats[i].IsOcupped = true;
+            if(count > countSeats)
+            {
+                Cars++;
+                _seats[i].IsOcupped = true;
+            }
         }
         foreach (var seat in _seats)
         {
