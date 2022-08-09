@@ -4,20 +4,23 @@ class Program
     {
         Direction direction = new Direction();
         Train train = new Train();
+        Ticet ticet = new Ticet();
         bool isWork = true;
         while (isWork)
         {
             Console.WriteLine("1. Назначить напровление. 2. Продать билеты. 3.Сформировать поезд 4. Отправить поезд.");
-            string input = Console.ReadLine();   
-            switch(input)
+            string input = Console.ReadLine();
+            switch (input)
             {
                 case "1":
                     direction.SetDirection();
                     break;
+                case "2":
+                    direction.ShowDirection();
+                    ticet.SellTicets();
+                    break;
 
             }
-            train.OcupSeats();
-            Console.ReadKey();
 
         }
     }
@@ -26,6 +29,9 @@ class Program
 class Direction
 {
     private List<Station> _stations = new List<Station>();
+    public bool isCreate { get; private set; }
+    string firstStation;
+    string lastStation;
     public Direction()
     {
         _stations.Add(new Station("Курская"));
@@ -50,18 +56,36 @@ class Direction
     }
     public void SetDirection()
     {
-        Console.Clear();
-        ShowStations();
-        Console.WriteLine("Укажите откуда хотите ехать.");
-        var firststation = GetStation(Console.ReadLine());
-        Console.WriteLine("Укажите куда хотите ехать.");
-        var laststation = GetStation(Console.ReadLine());
-        if (firststation == laststation)
+        if (!isCreate)
         {
-            Console.WriteLine("Неверное направление. Попробуйте ещё.");
-            SetDirection();
+            Console.Clear();
+            ShowStations();
+            Console.WriteLine("Укажите откуда хотите ехать.");
+            firstStation = GetStation(Console.ReadLine());
+            Console.WriteLine("Укажите куда хотите ехать.");
+            lastStation = GetStation(Console.ReadLine());
+            if (firstStation == lastStation)
+            {
+                isCreate = false;
+                Console.WriteLine("Неверное направление. Попробуйте ещё.");
+                SetDirection();
+            }
+            isCreate = true;
+            ShowDirection();
         }
-        Console.WriteLine($"Направление: {firststation} - {laststation}.");
+        else
+        {
+            Console.Clear();
+            Console.WriteLine("Направление уже назначено.");
+            ShowDirection();
+        }
+    }
+    public void ShowDirection()
+    {
+        if (isCreate)
+        {
+            Console.WriteLine($"Направление: {firstStation} - {lastStation}.");
+        }
     }
     private string GetStation(string input)
     {
@@ -99,6 +123,7 @@ class Ticet
 
     public void SellTicets()
     {
+        Console.Clear();
         count = rnd.Next(0, 31);
         Console.WriteLine($"Было продано {count} билетов.");
     }
