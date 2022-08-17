@@ -36,10 +36,11 @@ class Program
 
 class Direction : Train
 {
-    private List<Station> _stations = new List<Station>();
     public static bool isCreate { get; private set; }
-    string firstStation, lastStation;
-    
+
+    private List<Station> _stations = new List<Station>();
+    private string _firstStation;
+    private string _lastStation;
 
     public Direction()
     {
@@ -67,20 +68,22 @@ class Direction : Train
 
     public void SetDirection()
     {
-        if (!isCreate)
+        if (isCreate == false)
         {
             Console.Clear();
             ShowStations();
             Console.WriteLine("Укажите откуда хотите ехать.");
-            firstStation = GetStation(Console.ReadLine());
+            _firstStation = GetStation(Console.ReadLine());
             Console.WriteLine("Укажите куда хотите ехать.");
-            lastStation = GetStation(Console.ReadLine());
-            if (firstStation == lastStation)
+            _lastStation = GetStation(Console.ReadLine());
+
+            if (_firstStation == _lastStation)
             {
                 isCreate = false;
                 Console.WriteLine("Неверное направление. Попробуйте ещё.");
                 SetDirection();
             }
+
             isCreate = true;
             ShowDirection();
         }
@@ -96,31 +99,31 @@ class Direction : Train
     {
         if (isCreate)
         {
-            Console.WriteLine($"Направление: {firstStation} - {lastStation}.");
+            Console.WriteLine($"Направление: {_firstStation} - {_lastStation}.");
         }
     }
 
     private string GetStation(string input)
     {
-        string Station = "default";
+        string stationName = "default";
         bool canGet = false;
 
         foreach (var station in _stations)
         {
             if (station.Name.ToLower().Contains(input) || station.Name.Contains(input))
             {
-                Station = station.Name;
+                stationName = station.Name;
                 canGet = true;
             }
         }
 
-        if (!canGet)
+        if (canGet == false)
         {
             Console.WriteLine("Попробуйте ещё раз.");
-            Station = GetStation(Console.ReadLine());
+            stationName = GetStation(Console.ReadLine());
         }
 
-        return Station;
+        return stationName;
     }
 
     public override void SendTrain()
@@ -132,9 +135,11 @@ class Direction : Train
         }
         else
         {
+            Console.Clear();
             Console.WriteLine("Выполнены не все условия.");
         }
     }
+
 }
 
 class Station
@@ -150,24 +155,24 @@ class Station
 
 class Ticet
 {
-    public static int count { get; private set; }
-    Random rnd = new Random();
+    public static int SoldSount { get; private set; }
     protected static bool isSelling;
+    private Random _random = new Random();
 
     public void SellTicets()
     {
         if (!isSelling)
         {
             Console.Clear();
-            count = rnd.Next(25, 101);
-            Console.WriteLine($"Было продано {count} билетов.");
+            SoldSount = _random.Next(25, 101);
+            Console.WriteLine($"Было продано {SoldSount} билетов.");
             isSelling = true;
         }
         else
         {
             Console.Clear();
             Console.WriteLine("Билеты проданы.");
-            Console.WriteLine($"Продано {count} билетов.");
+            Console.WriteLine($"Продано {SoldSount} билетов.");
         }
     }
 
@@ -176,41 +181,41 @@ class Ticet
 class Seat
 {
     public bool IsOcupped = false;
-    public int number;
+    public int Number { get; private set; }
 
     public Seat(int num)
     {
-        number = num;
+        Number = num;
     }
 
-    private string mes()
+    private string Message()
     {
-        string mesag = IsOcupped ? $"{number}) Место занято." : $"{number}) Место свободно.";
-        return mesag;
+        string message = IsOcupped ? $"{Number}) Место занято." : $"{Number}) Место свободно.";
+        return message;
     }
 
     public void ShowInfo()
     {
-        Console.WriteLine(mes());
+        Console.WriteLine(Message());
     }
 
 }
 class Train : Ticet
 {
-    protected static List<Seat> _seats = new List<Seat>();
-    static int countSeats = 30;
     public static bool isFull { get; private set; }
+
+    protected List<Seat> _seats = new List<Seat>();
+    private int _countSeats = 30;
 
     public void OcupSeats()
     {
         if (isSelling)
         {
-            if (!isFull)
+            if (isFull == false)
             {
                 AddSeats();
-                for (int i = 0; i < count; i++)
-                {
-                    _seats[i].number = i + 1;
+                for (int i = 0; i < SoldSount; i++)
+                { 
                     _seats[i].IsOcupped = true;
                 }
                 foreach (var seat in _seats)
@@ -234,20 +239,20 @@ class Train : Ticet
 
     private int Seats()
     {
-        return countSeats * Cars();
+        return _countSeats * Cars();
     }
 
     private int Cars()
     {
         int cars = 0;
-        for (int i = 0; (countSeats * cars) < count; i++)
+        for (int i = 0; (_countSeats * cars) < SoldSount; i++)
         {
             cars++;
         }
         return cars;
     }
 
-    public void AddSeats()
+    private void AddSeats()
     {
         for (int i = 0; i < Seats(); i++)
         {
