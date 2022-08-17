@@ -24,9 +24,6 @@ class Program
                 case "4":
                     direction.SendTrain();
                     break;
-                case"5":
-                    train.ShowCars();
-                    break;
                 default:
                     Console.WriteLine("Неверная команда.");
                     break;
@@ -41,8 +38,9 @@ class Direction : Train
 {
     private List<Station> _stations = new List<Station>();
     public static bool isCreate { get; private set; }
-    string firstStation;
-    string lastStation;
+    string firstStation, lastStation;
+    
+
     public Direction()
     {
         _stations.Add(new Station("Курская"));
@@ -58,6 +56,7 @@ class Direction : Train
         _stations.Add(new Station("Ольгино"));
         _stations.Add(new Station("Железнодорожный"));
     }
+
     public void ShowStations()
     {
         foreach (var station in _stations)
@@ -65,6 +64,7 @@ class Direction : Train
             Console.WriteLine(station.Name);
         }
     }
+
     public void SetDirection()
     {
         if (!isCreate)
@@ -91,6 +91,7 @@ class Direction : Train
             ShowDirection();
         }
     }
+
     public void ShowDirection()
     {
         if (isCreate)
@@ -103,6 +104,7 @@ class Direction : Train
     {
         string Station = "default";
         bool canGet = false;
+
         foreach (var station in _stations)
         {
             if (station.Name.ToLower().Contains(input) || station.Name.Contains(input))
@@ -111,11 +113,13 @@ class Direction : Train
                 canGet = true;
             }
         }
+
         if (!canGet)
         {
             Console.WriteLine("Попробуйте ещё раз.");
             Station = GetStation(Console.ReadLine());
         }
+
         return Station;
     }
 
@@ -132,6 +136,7 @@ class Direction : Train
         }
     }
 }
+
 class Station
 {
     public string Name { get; private set; }
@@ -140,7 +145,9 @@ class Station
     {
         Name = name;
     }
+
 }
+
 class Ticet
 {
     public static int count { get; private set; }
@@ -165,19 +172,23 @@ class Ticet
     }
 
 }
-class Seat : Ticet
+
+class Seat
 {
     public bool IsOcupped = false;
     public int number;
+
     public Seat(int num)
     {
         number = num;
     }
+
     private string mes()
     {
         string mesag = IsOcupped ? $"{number}) Место занято." : $"{number}) Место свободно.";
         return mesag;
     }
+
     public void ShowInfo()
     {
         Console.WriteLine(mes());
@@ -188,7 +199,6 @@ class Train : Ticet
 {
     protected static List<Seat> _seats = new List<Seat>();
     static int countSeats = 30;
-    public static int cars { get; private set; }
     public static bool isFull { get; private set; }
 
     public void OcupSeats()
@@ -212,7 +222,7 @@ class Train : Ticet
             else
             {
                 Console.Clear();
-                Console.WriteLine($"Поезд сформирован. Собрано {cars} вагонов");
+                Console.WriteLine($"Поезд сформирован. Собрано {Cars()} вагонов");
             }
         }
         else
@@ -222,32 +232,27 @@ class Train : Ticet
         }
     }
 
-    private int CarSeats()
+    private int Seats()
     {
-        int seats = 30;
-        if (count > countSeats)
-        {
-            cars += 1;
-            countSeats = cars * seats;
-        }
-        return countSeats;
+        return countSeats * Cars();
     }
 
-    private void ShowSeats()
+    private int Cars()
     {
-        Console.WriteLine(countSeats.ToString());
+        int cars = 0;
+        for (int i = 0; (countSeats * cars) < count; i++)
+        {
+            cars++;
+        }
+        return cars;
     }
+
     public void AddSeats()
     {
-        for (int i = 0; i < CarSeats(); i++)
+        for (int i = 0; i < Seats(); i++)
         {
             _seats.Add(new Seat(i + 1));
         }
-    }
-    public void ShowCars()
-    {
-        Console.WriteLine(cars.ToString());
-        ShowSeats();
     }
 
     public virtual void SendTrain()
@@ -256,10 +261,7 @@ class Train : Ticet
         _seats.Clear();
         isFull = false;
         isSelling = false;
-        //cars = 1;
-        //countSeats = 30;
         Console.WriteLine("Поезд отправлен.");
     }
 
 }
-
