@@ -58,6 +58,20 @@ class Direction : Train
         _stations.Add(new Station("Железнодорожный"));
     }
 
+    public override void SendTrain()
+    {
+        if (IsCreate && isFull && _isSelling)
+        {
+            IsCreate = false;
+            base.SendTrain();
+        }
+        else
+        {
+            Console.Clear();
+            Console.WriteLine("Выполнены не все условия.");
+        }
+    }
+
     public void ShowStations()
     {
         foreach (var station in _stations)
@@ -126,19 +140,6 @@ class Direction : Train
         return stationName;
     }
 
-    public override void SendTrain()
-    {
-        if (IsCreate && isFull && _isSelling)
-        {
-            IsCreate = false;
-            base.SendTrain();
-        }
-        else
-        {
-            Console.Clear();
-            Console.WriteLine("Выполнены не все условия.");
-        }
-    }
 
 }
 
@@ -190,24 +191,33 @@ class Seat
         Number = num;
     }
 
+    public void ShowInfo()
+    {
+        Console.WriteLine(Message());
+    }
+
     private string Message()
     {
         string message = IsOcupped ? $"{Number}) Место занято." : $"{Number}) Место свободно.";
         return message;
     }
 
-    public void ShowInfo()
-    {
-        Console.WriteLine(Message());
-    }
 
 }
 class Train : TicetsOffice
 {
     public static bool isFull { get; private set; }
-
     protected List<Seat> _seats = new List<Seat>();
     private int _countSeats = 30;
+
+    public virtual void SendTrain()
+    {
+        Console.Clear();
+        _seats.Clear();
+        isFull = false;
+        _isSelling = false;
+        Console.WriteLine("Поезд отправлен.");
+    }
 
     public void OcupSeats()
     {
@@ -261,15 +271,6 @@ class Train : TicetsOffice
         {
             _seats.Add(new Seat(i + 1));
         }
-    }
-
-    public virtual void SendTrain()
-    {
-        Console.Clear();
-        _seats.Clear();
-        isFull = false;
-        _isSelling = false;
-        Console.WriteLine("Поезд отправлен.");
     }
 
 }
