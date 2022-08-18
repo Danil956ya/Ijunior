@@ -4,7 +4,7 @@ class Program
     {
         Direction direction = new Direction();
         Train train = new Train();
-        Ticet ticet = new Ticet();
+        TicetsOffice office = new TicetsOffice();
         bool isWork = true;
         while (isWork)
         {
@@ -16,7 +16,7 @@ class Program
                     direction.SetDirection();
                     break;
                 case "2":
-                    ticet.SellTicets();
+                    office.SellTicets();
                     break;
                 case "3":
                     train.OcupSeats();
@@ -36,7 +36,7 @@ class Program
 
 class Direction : Train
 {
-    public static bool isCreate { get; private set; }
+    public static bool IsCreate { get; private set; }
 
     private List<Station> _stations = new List<Station>();
     private string _firstStation;
@@ -68,7 +68,7 @@ class Direction : Train
 
     public void SetDirection()
     {
-        if (isCreate == false)
+        if (IsCreate == false)
         {
             Console.Clear();
             ShowStations();
@@ -79,12 +79,12 @@ class Direction : Train
 
             if (_firstStation == _lastStation)
             {
-                isCreate = false;
+                IsCreate = false;
                 Console.WriteLine("Неверное направление. Попробуйте ещё.");
                 SetDirection();
             }
 
-            isCreate = true;
+            IsCreate = true;
             ShowDirection();
         }
         else
@@ -97,7 +97,7 @@ class Direction : Train
 
     public void ShowDirection()
     {
-        if (isCreate)
+        if (IsCreate)
         {
             Console.WriteLine($"Направление: {_firstStation} - {_lastStation}.");
         }
@@ -128,9 +128,9 @@ class Direction : Train
 
     public override void SendTrain()
     {
-        if (isCreate && isFull && isSelling)
+        if (IsCreate && isFull && _isSelling)
         {
-            isCreate = false;
+            IsCreate = false;
             base.SendTrain();
         }
         else
@@ -153,20 +153,22 @@ class Station
 
 }
 
-class Ticet
+class TicetsOffice
 {
     public static int SoldSount { get; private set; }
-    protected static bool isSelling;
+    protected static bool _isSelling;
     private Random _random = new Random();
+    private int _minCountSold = 25;
+    private int _maxCountSold = 101;
 
     public void SellTicets()
     {
-        if (!isSelling)
+        if (_isSelling == false)
         {
             Console.Clear();
-            SoldSount = _random.Next(25, 101);
+            SoldSount = _random.Next(_minCountSold, _maxCountSold);
             Console.WriteLine($"Было продано {SoldSount} билетов.");
-            isSelling = true;
+            _isSelling = true;
         }
         else
         {
@@ -200,7 +202,7 @@ class Seat
     }
 
 }
-class Train : Ticet
+class Train : TicetsOffice
 {
     public static bool isFull { get; private set; }
 
@@ -209,7 +211,7 @@ class Train : Ticet
 
     public void OcupSeats()
     {
-        if (isSelling)
+        if (_isSelling)
         {
             if (isFull == false)
             {
@@ -239,7 +241,8 @@ class Train : Ticet
 
     private int Seats()
     {
-        return _countSeats * Cars();
+        int seats = _countSeats * Cars();
+        return seats;
     }
 
     private int Cars()
@@ -265,7 +268,7 @@ class Train : Ticet
         Console.Clear();
         _seats.Clear();
         isFull = false;
-        isSelling = false;
+        _isSelling = false;
         Console.WriteLine("Поезд отправлен.");
     }
 
