@@ -8,7 +8,7 @@ class Program
         bool isWork = true;
         while (isWork)
         {
-            Console.WriteLine("1. Назначить напровление. 2. Продать билеты. 3.Сформировать поезд 4. Отправить поезд.");
+            Console.WriteLine("1. Назначить направление. 2. Продать билеты. 3.Сформировать поезд 4. Отправить поезд.");
             string input = Console.ReadLine();
             switch (input)
             {
@@ -19,10 +19,10 @@ class Program
                     office.SellTicets();
                     break;
                 case "3":
-                    train.OcupSeats();
+                    train.OcupSeats(office.IsSelling, office.SoldCount);
                     break;
                 case "4":
-                    direction.SendTrain();
+                    train.SendTrain(ref direction.IsCreate,ref office.IsSelling);
                     break;
                 default:
                     Console.WriteLine("Неверная команда.");
@@ -34,13 +34,12 @@ class Program
     }
 }
 
-class Direction : Train
+class Direction
 {
-    public static bool IsCreate { get; private set; }
-
     private List<Station> _stations = new List<Station>();
     private string _firstStation;
     private string _lastStation;
+    public bool IsCreate;
 
     public Direction()
     {
@@ -56,20 +55,6 @@ class Direction : Train
         _stations.Add(new Station("Кучино"));
         _stations.Add(new Station("Ольгино"));
         _stations.Add(new Station("Железнодорожный"));
-    }
-
-    public override void SendTrain()
-    {
-        if (IsCreate && isFull && _isSelling)
-        {
-            IsCreate = false;
-            base.SendTrain();
-        }
-        else
-        {
-            Console.Clear();
-            Console.WriteLine("Выполнены не все условия.");
-        }
     }
 
     public void ShowStations()
@@ -156,26 +141,26 @@ class Station
 
 class TicetsOffice
 {
-    public static int SoldSount { get; private set; }
-    protected static bool _isSelling;
+    public bool IsSelling;
     private Random _random = new Random();
     private int _minCountSold = 25;
     private int _maxCountSold = 101;
+    public int SoldCount { get; private set; }
 
     public void SellTicets()
     {
-        if (_isSelling == false)
+        if (IsSelling == false)
         {
             Console.Clear();
-            SoldSount = _random.Next(_minCountSold, _maxCountSold);
-            Console.WriteLine($"Было продано {SoldSount} билетов.");
-            _isSelling = true;
+            SoldCount = _random.Next(_minCountSold, _maxCountSold);
+            Console.WriteLine($"Было продано {SoldCount} билетов.");
+            IsSelling = true;
         }
         else
         {
             Console.Clear();
             Console.WriteLine("Билеты проданы.");
-            Console.WriteLine($"Продано {SoldSount} билетов.");
+            Console.WriteLine($"Продано {SoldCount} билетов.");
         }
     }
 
@@ -204,30 +189,36 @@ class Seat
 
 
 }
-class Train : TicetsOffice
+class Train
 {
-    public static bool isFull { get; private set; }
     protected List<Seat> _seats = new List<Seat>();
     private int _countSeats = 30;
+    private int _count;
+    public static bool isFull { get; private set; }
 
-    public virtual void SendTrain()
+    public void SendTrain(ref bool dada,ref bool netn)
     {
-        Console.Clear();
-        _seats.Clear();
-        isFull = false;
-        _isSelling = false;
-        Console.WriteLine("Поезд отправлен.");
+        if (dada && netn)
+        {
+            Console.Clear();
+            _seats.Clear();
+            isFull = false;
+            dada = false;
+            netn = false;
+            Console.WriteLine("Поезд отправлен.");
+        }
     }
 
-    public void OcupSeats()
+    public void OcupSeats(bool IsSelling, int SoldCount)
     {
-        if (_isSelling)
+        _count = SoldCount;
+        if (IsSelling)
         {
             if (isFull == false)
             {
                 AddSeats();
-                for (int i = 0; i < SoldSount; i++)
-                { 
+                for (int i = 0; i < SoldCount; i++)
+                {
                     _seats[i].IsOcupped = true;
                 }
                 foreach (var seat in _seats)
@@ -258,7 +249,7 @@ class Train : TicetsOffice
     private int Cars()
     {
         int cars = 0;
-        for (int i = 0; (_countSeats * cars) < SoldSount; i++)
+        for (int i = 0; (_countSeats * cars) < _count; i++)
         {
             cars++;
         }
