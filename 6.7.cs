@@ -19,10 +19,10 @@ class Program
                     office.SellTicets();
                     break;
                 case "3":
-                    train.OcupSeats(office.IsSelling, office.SoldCount);
+                    train.OcupSeats(office.IsSelling(), office.SoldCount);
                     break;
                 case "4":
-                    train.SendTrain(ref direction.IsCreate,ref office.IsSelling);
+                    train.SendTrain(ref direction.IsCreated(),ref office.IsSelling());
                     break;
                 default:
                     Console.WriteLine("Неверная команда.");
@@ -39,7 +39,7 @@ class Direction
     private List<Station> _stations = new List<Station>();
     private string _firstStation;
     private string _lastStation;
-    public bool IsCreate;
+    private bool _isCreated;
 
     public Direction()
     {
@@ -64,10 +64,14 @@ class Direction
             Console.WriteLine(station.Name);
         }
     }
+    public ref bool IsCreated()
+    {
+        return ref _isCreated;
+    }
 
     public void SetDirection()
     {
-        if (IsCreate == false)
+        if (_isCreated == false)
         {
             Console.Clear();
             ShowStations();
@@ -78,12 +82,12 @@ class Direction
 
             if (_firstStation == _lastStation)
             {
-                IsCreate = false;
+                _isCreated = false;
                 Console.WriteLine("Неверное направление. Попробуйте ещё.");
                 SetDirection();
             }
 
-            IsCreate = true;
+            _isCreated = true;
             ShowDirection();
         }
         else
@@ -96,7 +100,7 @@ class Direction
 
     public void ShowDirection()
     {
-        if (IsCreate)
+        if (_isCreated)
         {
             Console.WriteLine($"Направление: {_firstStation} - {_lastStation}.");
         }
@@ -141,20 +145,25 @@ class Station
 
 class TicetsOffice
 {
-    public bool IsSelling;
+    private bool _isSelling;
     private Random _random = new Random();
     private int _minCountSold = 25;
     private int _maxCountSold = 101;
     public int SoldCount { get; private set; }
 
+    public ref bool IsSelling()
+    {
+        return ref _isSelling;
+    }
+
     public void SellTicets()
     {
-        if (IsSelling == false)
+        if (_isSelling == false)
         {
             Console.Clear();
             SoldCount = _random.Next(_minCountSold, _maxCountSold);
             Console.WriteLine($"Было продано {SoldCount} билетов.");
-            IsSelling = true;
+            _isSelling = true;
         }
         else
         {
@@ -189,22 +198,23 @@ class Seat
 
 
 }
+
 class Train
 {
     protected List<Seat> _seats = new List<Seat>();
     private int _countSeats = 30;
     private int _count;
-    public static bool isFull { get; private set; }
+    public static bool IsFull { get; private set; }
 
-    public void SendTrain(ref bool dada,ref bool netn)
+    public void SendTrain(ref bool IsCreated,ref bool isSelling)
     {
-        if (dada && netn)
+        if (IsCreated && isSelling && IsFull)
         {
             Console.Clear();
             _seats.Clear();
-            isFull = false;
-            dada = false;
-            netn = false;
+            IsFull = false;
+            isSelling = false;
+            IsCreated = false;
             Console.WriteLine("Поезд отправлен.");
         }
     }
@@ -214,7 +224,7 @@ class Train
         _count = SoldCount;
         if (IsSelling)
         {
-            if (isFull == false)
+            if (IsFull == false)
             {
                 AddSeats();
                 for (int i = 0; i < SoldCount; i++)
@@ -225,7 +235,7 @@ class Train
                 {
                     seat.ShowInfo();
                 }
-                isFull = true;
+                IsFull = true;
             }
             else
             {
@@ -265,3 +275,4 @@ class Train
     }
 
 }
+
