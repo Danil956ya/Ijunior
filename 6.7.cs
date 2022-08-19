@@ -3,8 +3,9 @@ class Program
     static void Main(string[] args)
     {
         TrainProgram program = new TrainProgram();
-        bool isWork = true;
-        while (isWork)
+        bool _isWork = true;
+
+        while (_isWork)
         {
             Console.WriteLine("1. Назначить направление. 2. Продать билеты. 3.Сформировать поезд 4. Отправить поезд.");
             string input = Console.ReadLine();
@@ -13,8 +14,8 @@ class Program
                 case "1":
                     program.SetDirection();
                     break;
-                case "2":
-                    program.SellTikets();
+                case "2":   
+                    program.SellTicets();
                     break;
                 case "3":
                     program.OcupSeats();
@@ -32,24 +33,25 @@ class Program
         }
     }
 }
+
 class TrainProgram
 {
-    Direction direction = new Direction();
-    Train train = new Train();
-    TicetsOffice office = new TicetsOffice();
+    private Direction _direction = new Direction();
+    private Train _train = new Train();
+    private TicetsOffice _office = new TicetsOffice();
     private bool _isDirection = false;
     private bool _isSelling = false;
     private bool _isOcupped = false;
 
     public void SetDirection()
     {
-        direction.SetDirection();
+        _direction.SetDirection();
         _isDirection = true;
     }
 
-    public void SellTikets()
+    public void SellTicets  ()
     {
-        office.SellTicets();
+        _office.SellTicets();
         _isSelling = true;
     }
 
@@ -62,39 +64,41 @@ class TrainProgram
         }
         else
         {
-            train.OcupSeats(office.SoldCount);
+            _train.OcupSeats(_office.SoldCount);
             _isOcupped = true;
         }
     }
+
     public void SendTrain()
     {
         if (IsComplete())
         {
-            train.SendTrain();
+            _train.SendTrain();
             _isSelling = false;
-            office.SetSelling(_isSelling);
+            _office.SetSelling(_isSelling);
             _isOcupped = false;
-            train.SetFull(_isOcupped);
+            _train.SetFull(_isOcupped);
             _isDirection = false;
-            direction.SetCreated(_isDirection);
+            _direction.SetCreated(_isDirection);
         }
         else
         {
             Console.WriteLine("Не все условия выполнены.");
         }
     }
+
     private bool IsComplete()
     {
-        bool dada;
+        bool complete;
         if (_isOcupped && _isSelling && _isDirection)
         {
-            dada = true;
-            return dada;
+            complete = true;
+            return complete;
         }
         else
         {
-            dada = false;
-            return dada;
+            complete = false;
+            return complete;
         }
     }
 }
@@ -245,17 +249,17 @@ class Seat
     public bool IsOcupped = false;
     public int Number { get; private set; }
 
-    public Seat(int num)
+    public Seat(int number)
     {
-        Number = num;
+        Number = number;
     }
 
     public void ShowInfo()
     {
-        Console.WriteLine(Message());
+        Console.WriteLine(SetMessage());
     }
 
-    private string Message()
+    private string SetMessage()
     {
         string message = IsOcupped ? $"{Number}) Место занято." : $"{Number}) Место свободно.";
         return message;
@@ -302,18 +306,18 @@ class Train
         else
         {
             Console.Clear();
-            Console.WriteLine($"Было собрано {Cars()} вагонов.");
+            Console.WriteLine($"Было собрано {GetCars()} вагонов.");
         }
 
     }
 
-    private int Seats()
+    private int GetSeats()
     {
-        int seats = _countSeats * Cars();
+        int seats = _countSeats * GetCars();
         return seats;
     }
 
-    private int Cars()
+    private int GetCars()
     {
         int cars = 0;
         for (int i = 0; (_countSeats * cars) < _count; i++)
@@ -325,7 +329,7 @@ class Train
 
     private void AddSeats()
     {
-        for (int i = 0; i < Seats(); i++)
+        for (int i = 0; i < GetSeats(); i++)
         {
             _seats.Add(new Seat(i + 1));
         }
