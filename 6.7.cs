@@ -2,9 +2,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        Direction direction = new Direction();
-        Train train = new Train();
-        TicetsOffice office = new TicetsOffice();
+        TrainProgram program = new TrainProgram();
         bool isWork = true;
         while (isWork)
         {
@@ -13,23 +11,90 @@ class Program
             switch (input)
             {
                 case "1":
-                    direction.SetDirection();
+                    program.SetDirection();
                     break;
                 case "2":
-                    office.SellTicets();
+                    program.SellTikets();
                     break;
                 case "3":
-                    train.OcupSeats(office.IsSelling(), office.SoldCount);
+                    program.OcupSeats();
                     break;
                 case "4":
-                    train.SendTrain(ref direction.IsCreated(),ref office.IsSelling());
+                    program.SendTrain();
                     break;
                 default:
+                    Console.Clear();
                     Console.WriteLine("Неверная команда.");
                     break;
 
             }
 
+        }
+    }
+}
+class TrainProgram
+{
+    Direction direction = new Direction();
+    Train train = new Train();
+    TicetsOffice office = new TicetsOffice();
+    private bool _isDirection = false;
+    private bool _isSelling = false;
+    private bool _isOcupped = false;
+
+    public void SetDirection()
+    {
+        direction.SetDirection();
+        _isDirection = true;
+    }
+
+    public void SellTikets()
+    {
+        office.SellTicets();
+        _isSelling = true;
+    }
+
+    public void OcupSeats()
+    {
+        if (_isSelling == false)
+        {
+            Console.Clear();
+            Console.WriteLine("Сначала продайте билеты.");
+        }
+        else
+        {
+            train.OcupSeats(office.SoldCount);
+            _isOcupped = true;
+        }
+    }
+    public void SendTrain()
+    {
+        if (IsComplete())
+        {
+            train.SendTrain();
+            _isSelling = false;
+            office.SetSelling(_isSelling);
+            _isOcupped = false;
+            train.SetFull(_isOcupped);
+            _isDirection = false;
+            direction.SetCreated(_isDirection);
+        }
+        else
+        {
+            Console.WriteLine("Не все условия выполнены.");
+        }
+    }
+    private bool IsComplete()
+    {
+        bool dada;
+        if (_isOcupped && _isSelling && _isDirection)
+        {
+            dada = true;
+            return dada;
+        }
+        else
+        {
+            dada = false;
+            return dada;
         }
     }
 }
@@ -64,12 +129,13 @@ class Direction
             Console.WriteLine(station.Name);
         }
     }
-    public ref bool IsCreated()
+
+    public void SetCreated(bool created)
     {
-        return ref _isCreated;
+        _isCreated = created;
     }
 
-    public void SetDirection()
+    public virtual void SetDirection()
     {
         if (_isCreated == false)
         {
@@ -82,18 +148,16 @@ class Direction
 
             if (_firstStation == _lastStation)
             {
-                _isCreated = false;
+                SetCreated(false);
                 Console.WriteLine("Неверное направление. Попробуйте ещё.");
                 SetDirection();
             }
-
-            _isCreated = true;
+            SetCreated(true);
+            Console.Clear();
             ShowDirection();
         }
         else
         {
-            Console.Clear();
-            Console.WriteLine("Направление уже назначено.");
             ShowDirection();
         }
     }
@@ -102,6 +166,7 @@ class Direction
     {
         if (_isCreated)
         {
+            Console.Clear();
             Console.WriteLine($"Направление: {_firstStation} - {_lastStation}.");
         }
     }
@@ -151,9 +216,9 @@ class TicetsOffice
     private int _maxCountSold = 101;
     public int SoldCount { get; private set; }
 
-    public ref bool IsSelling()
+    public void SetSelling(bool isSelling)
     {
-        return ref _isSelling;
+        _isSelling = isSelling;
     }
 
     public void SellTicets()
@@ -204,50 +269,42 @@ class Train
     protected List<Seat> _seats = new List<Seat>();
     private int _countSeats = 30;
     private int _count;
-    public static bool IsFull { get; private set; }
+    public bool IsFull { get; private set; }
 
-    public void SendTrain(ref bool IsCreated,ref bool isSelling)
+    public void SendTrain()
     {
-        if (IsCreated && isSelling && IsFull)
-        {
-            Console.Clear();
-            _seats.Clear();
-            IsFull = false;
-            isSelling = false;
-            IsCreated = false;
-            Console.WriteLine("Поезд отправлен.");
-        }
+        Console.Clear();
+        _seats.Clear();
+        Console.WriteLine("Поезд отправлен.");
     }
 
-    public void OcupSeats(bool IsSelling, int SoldCount)
+    public void SetFull(bool isFull)
+    {
+        IsFull = isFull;
+    }
+
+    public void OcupSeats(int SoldCount)
     {
         _count = SoldCount;
-        if (IsSelling)
+        if (IsFull == false)
         {
-            if (IsFull == false)
+            AddSeats();
+            for (int i = 0; i < SoldCount; i++)
             {
-                AddSeats();
-                for (int i = 0; i < SoldCount; i++)
-                {
-                    _seats[i].IsOcupped = true;
-                }
-                foreach (var seat in _seats)
-                {
-                    seat.ShowInfo();
-                }
-                IsFull = true;
+                _seats[i].IsOcupped = true;
             }
-            else
+            foreach (var seat in _seats)
             {
-                Console.Clear();
-                Console.WriteLine($"Поезд сформирован. Собрано {Cars()} вагонов");
+                seat.ShowInfo();
             }
+            IsFull = true;
         }
         else
         {
             Console.Clear();
-            Console.WriteLine("Сначала продайте билеты.");
+            Console.WriteLine($"Было собрано {Cars()} вагонов.");
         }
+
     }
 
     private int Seats()
@@ -275,4 +332,3 @@ class Train
     }
 
 }
-
