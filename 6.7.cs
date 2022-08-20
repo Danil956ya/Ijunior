@@ -12,7 +12,7 @@ class Program
             switch (input)
             {
                 case "1":
-                    program.SetDirection();
+                    program.GetDirection();
                     break;
                 case "2":   
                     program.SellTicets();
@@ -43,7 +43,7 @@ class TrainProgram
     private bool _isSelling = false;
     private bool _isOcupped = false;
 
-    public void SetDirection()
+    public void GetDirection()
     {
         _direction.SetDirection();
         _isDirection = true;
@@ -75,11 +75,11 @@ class TrainProgram
         {
             _train.SendTrain();
             _isSelling = false;
-            _office.SetSelling(_isSelling);
+            _office.IsSelling(_isSelling);
             _isOcupped = false;
-            _train.SetFull(_isOcupped);
+            _train.IsFull(_isOcupped);
             _isDirection = false;
-            _direction.SetCreated(_isDirection);
+            _direction.IsCreated(_isDirection);
         }
         else
         {
@@ -134,12 +134,12 @@ class Direction
         }
     }
 
-    public void SetCreated(bool created)
+    public void IsCreated(bool created)
     {
         _isCreated = created;
     }
 
-    public virtual void SetDirection()
+    public void SetDirection()
     {
         if (_isCreated == false)
         {
@@ -152,11 +152,11 @@ class Direction
 
             if (_firstStation == _lastStation)
             {
-                SetCreated(false);
+                IsCreated(false);
                 Console.WriteLine("Неверное направление. Попробуйте ещё.");
                 SetDirection();
             }
-            SetCreated(true);
+            IsCreated(true);
             Console.Clear();
             ShowDirection();
         }
@@ -198,7 +198,6 @@ class Direction
         return stationName;
     }
 
-
 }
 
 class Station
@@ -220,7 +219,7 @@ class TicetsOffice
     private int _maxCountSold = 101;
     public int SoldCount { get; private set; }
 
-    public void SetSelling(bool isSelling)
+    public void IsSelling(bool isSelling)
     {
         _isSelling = isSelling;
     }
@@ -256,10 +255,10 @@ class Seat
 
     public void ShowInfo()
     {
-        Console.WriteLine(SetMessage());
+        Console.WriteLine(GetMessage());
     }
 
-    private string SetMessage()
+    private string GetMessage()
     {
         string message = IsOcupped ? $"{Number}) Место занято." : $"{Number}) Место свободно.";
         return message;
@@ -270,7 +269,7 @@ class Seat
 
 class Train
 {
-    protected List<Seat> _seats = new List<Seat>();
+    private List<Seat> _seats = new List<Seat>();
     private int _countSeats = 30;
     private int _count;
     public bool IsFull { get; private set; }
@@ -282,7 +281,7 @@ class Train
         Console.WriteLine("Поезд отправлен.");
     }
 
-    public void SetFull(bool isFull)
+    public void IsFull(bool isFull)
     {
         IsFull = isFull;
     }
