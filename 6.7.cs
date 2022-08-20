@@ -12,13 +12,13 @@ class Program
             switch (input)
             {
                 case "1":
-                    program.GetDirection();
+                    program.AssignDirection();
                     break;
                 case "2":   
                     program.SellTicets();
                     break;
                 case "3":
-                    program.OcupSeats();
+                    program.FormTrain();
                     break;
                 case "4":
                     program.SendTrain();
@@ -43,7 +43,7 @@ class TrainProgram
     private bool _isSelling = false;
     private bool _isOcupped = false;
 
-    public void GetDirection()
+    public void AssignDirection()
     {
         _direction.SetDirection();
         _isDirection = true;
@@ -55,7 +55,7 @@ class TrainProgram
         _isSelling = true;
     }
 
-    public void OcupSeats()
+    public void FormTrain()
     {
         if (_isSelling == false)
         {
@@ -64,7 +64,7 @@ class TrainProgram
         }
         else
         {
-            _train.OcupSeats(_office.SoldCount);
+            _train.FormTrain(_office.SoldCount);
             _isOcupped = true;
         }
     }
@@ -75,11 +75,11 @@ class TrainProgram
         {
             _train.SendTrain();
             _isSelling = false;
-            _office.IsSelling(_isSelling);
+            _office.SetBoolIsSelling(_isSelling);
             _isOcupped = false;
-            _train.IsFull(_isOcupped);
+            _train.SetBoolIsFull(_isOcupped);
             _isDirection = false;
-            _direction.IsCreated(_isDirection);
+            _direction.SetBoolIsCreated(_isDirection);
         }
         else
         {
@@ -134,7 +134,7 @@ class Direction
         }
     }
 
-    public void IsCreated(bool created)
+    public void SetBoolIsCreated(bool created)
     {
         _isCreated = created;
     }
@@ -152,11 +152,11 @@ class Direction
 
             if (_firstStation == _lastStation)
             {
-                IsCreated(false);
+                SetBoolIsCreated(false);
                 Console.WriteLine("Неверное направление. Попробуйте ещё.");
                 SetDirection();
             }
-            IsCreated(true);
+            SetBoolIsCreated(true);
             Console.Clear();
             ShowDirection();
         }
@@ -219,7 +219,7 @@ class TicetsOffice
     private int _maxCountSold = 101;
     public int SoldCount { get; private set; }
 
-    public void IsSelling(bool isSelling)
+    public void SetBoolIsSelling(bool isSelling)
     {
         _isSelling = isSelling;
     }
@@ -245,7 +245,7 @@ class TicetsOffice
 
 class Seat
 {
-    public bool IsOcupped = false;
+    private bool _isOcupped = false;
     public int Number { get; private set; }
 
     public Seat(int number)
@@ -258,9 +258,14 @@ class Seat
         Console.WriteLine(GetMessage());
     }
 
+    public void OcupSeat()
+    {
+        _isOcupped = true;
+    }
+
     private string GetMessage()
     {
-        string message = IsOcupped ? $"{Number}) Место занято." : $"{Number}) Место свободно.";
+        string message = _isOcupped ? $"{Number}) Место занято." : $"{Number}) Место свободно.";
         return message;
     }
 
@@ -281,12 +286,12 @@ class Train
         Console.WriteLine("Поезд отправлен.");
     }
 
-    public void IsFull(bool isFull)
+    public void SetBoolIsFull(bool isFull)
     {
         IsFull = isFull;
     }
 
-    public void OcupSeats(int SoldCount)
+    public void FormTrain(int SoldCount)
     {
         _count = SoldCount;
         if (IsFull == false)
@@ -294,7 +299,7 @@ class Train
             AddSeats();
             for (int i = 0; i < SoldCount; i++)
             {
-                _seats[i].IsOcupped = true;
+                _seats[i].OcupSeat();
             }
             foreach (var seat in _seats)
             {
