@@ -78,13 +78,14 @@ namespace CSharpLight
         {
             if (IsComplete())
             {
-                _train.SendTrain();
-                _isSelling = false;
-                _office.SetBoolIsSelling(_isSelling);
-                _isOcupped = false;
-                _train.SetBoolIsFull(_isOcupped);
-                _isDirection = false;
-                _direction.Create(_isDirection);
+                _direction = new Direction();
+                _office = new TicetsOffice();
+                _train = new Train();
+                _isDirection = _direction.IsCreated;
+                _isSelling = _office.IsSelling;
+                _isOcupped = _train.IsFull;
+                Console.WriteLine("Поезд отправлен.");
+                return;
             }
             else
             {
@@ -94,16 +95,13 @@ namespace CSharpLight
 
         private bool IsComplete()
         {
-            bool complete;
             if (_isOcupped && _isSelling && _isDirection)
             {
-                complete = true;
-                return complete;
+                return true;
             }
             else
             {
-                complete = false;
-                return complete;
+                return false;
             }
         }
     }
@@ -113,10 +111,11 @@ namespace CSharpLight
         private List<Station> _stations = new List<Station>();
         private string _firstStation;
         private string _lastStation;
-        private bool _isCreated;
+        public bool IsCreated { get; private set; }
 
         public Direction()
         {
+            IsCreated = false;
             _stations.Add(new Station("Курская"));
             _stations.Add(new Station("Серп и Молот"));
             _stations.Add(new Station("Карачарово"));
@@ -141,13 +140,13 @@ namespace CSharpLight
 
         public bool Create(bool created)
         {
-            _isCreated = created;
-            return _isCreated;
+            IsCreated = created;
+            return IsCreated;
         }
 
         public void SetDirection()
         {
-            if (_isCreated == false)
+            if (IsCreated == false)
             {
                 Console.Clear();
                 ShowStations();
@@ -174,7 +173,7 @@ namespace CSharpLight
 
         public void ShowDirection()
         {
-            if (_isCreated)
+            if (IsCreated)
             {
                 Console.Clear();
                 Console.WriteLine($"Направление: {_firstStation} - {_lastStation}.");
@@ -219,25 +218,25 @@ namespace CSharpLight
 
     class TicetsOffice
     {
-        private bool _isSelling;
         private Random _random = new Random();
         private int _minCountSold = 25;
         private int _maxCountSold = 101;
+        public bool IsSelling { get; private set; }
         public int SoldCount { get; private set; }
 
         public void SetBoolIsSelling(bool isSelling)
         {
-            _isSelling = isSelling;
+            IsSelling = isSelling;
         }
 
         public void SellTicets()
         {
-            if (_isSelling == false)
+            if (IsSelling == false)
             {
                 Console.Clear();
                 SoldCount = _random.Next(_minCountSold, _maxCountSold);
                 Console.WriteLine($"Было продано {SoldCount} билетов.");
-                _isSelling = true;
+                IsSelling = true;
             }
             else
             {
@@ -285,16 +284,9 @@ namespace CSharpLight
         private int _count;
         public bool IsFull { get; private set; }
 
-        public void SendTrain()
+        public Train()
         {
-            Console.Clear();
-            _seats.Clear();
-            Console.WriteLine("Поезд отправлен.");
-        }
-
-        public void SetBoolIsFull(bool isFull)
-        {
-            IsFull = isFull;
+            IsFull = false;
         }
 
         public void FormTrain(int SoldCount)
