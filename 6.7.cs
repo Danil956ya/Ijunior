@@ -8,9 +8,9 @@ namespace CSharpLight
         static void Main(string[] args)
         {
             TrainProgram program = new TrainProgram();
-            bool _isWork = true;
+            bool IsWork = true;
 
-            while (_isWork)
+            while (IsWork)
             {
                 Console.WriteLine("1. Назначить направление. 2. Продать билеты. 3.Сформировать поезд 4. Отправить поезд.");
                 string input = Console.ReadLine();
