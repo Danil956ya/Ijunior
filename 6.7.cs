@@ -89,6 +89,7 @@ namespace CSharpLight
             }
             else
             {
+                Console.Clear();
                 Console.WriteLine("Не все условия выполнены.");
             }
         }
@@ -138,35 +139,29 @@ namespace CSharpLight
             }
         }
 
-        public bool Create(bool created)
-        {
-            IsCreated = created;
-            return IsCreated;
-        }
-
         public void SetDirection()
         {
             if (IsCreated == false)
             {
-                Console.Clear();
                 ShowStations();
                 Console.WriteLine("Укажите откуда хотите ехать.");
                 _firstStation = GetStation(Console.ReadLine());
                 Console.WriteLine("Укажите куда хотите ехать.");
                 _lastStation = GetStation(Console.ReadLine());
 
-                if (_firstStation == _lastStation)
+                IsCreated = _firstStation == _lastStation ? false : true;
+
+                if (IsCreated == false)
                 {
-                    Create(false);
+                    Console.Clear();
                     Console.WriteLine("Неверное направление. Попробуйте ещё.");
                     SetDirection();
                 }
-                Create(true);
-                Console.Clear();
                 ShowDirection();
             }
             else
             {
+                Console.Clear();
                 ShowDirection();
             }
         }
