@@ -8,9 +8,9 @@ namespace CSharpLight
         static void Main(string[] args)
         {
             TrainProgram program = new TrainProgram();
-            bool IsWork = true;
+            bool isWork = true;
 
-            while (IsWork)
+            while (isWork)
             {
                 Console.WriteLine("1. Назначить направление. 2. Продать билеты. 3.Сформировать поезд 4. Отправить поезд.");
                 string input = Console.ReadLine();
@@ -44,33 +44,27 @@ namespace CSharpLight
         private Direction _direction = new Direction();
         private Train _train = new Train();
         private TicetsOffice _office = new TicetsOffice();
-        private bool _isDirection = false;
-        private bool _isSelling = false;
-        private bool _isOcupped = false;
 
         public void AssignDirection()
         {
-            _direction.SetDirection();
-            _isDirection = true;
+            _direction.IndicateStations();
         }
 
         public void SellTicets()
         {
             _office.SellTicets();
-            _isSelling = true;
         }
 
         public void FormTrain()
         {
-            if (_isSelling == false)
+            if (_office.IsSelling == false)
             {
                 Console.Clear();
                 Console.WriteLine("Сначала продайте билеты.");
             }
             else
             {
-                _train.FormTrain(_office.SoldCount);
-                _isOcupped = true;
+                _train.FillSeats(_office.SoldCount);
             }
         }
 
@@ -81,9 +75,6 @@ namespace CSharpLight
                 _direction = new Direction();
                 _office = new TicetsOffice();
                 _train = new Train();
-                _isDirection = _direction.IsCreated;
-                _isSelling = _office.IsSelling;
-                _isOcupped = _train.IsFull;
                 Console.WriteLine("Поезд отправлен.");
                 return;
             }
@@ -96,14 +87,7 @@ namespace CSharpLight
 
         private bool IsComplete()
         {
-            if (_isOcupped && _isSelling && _isDirection)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return _direction.IsCreated && _train.IsFull && _office.IsSelling;
         }
     }
 
@@ -139,7 +123,7 @@ namespace CSharpLight
             }
         }
 
-        public void SetDirection()
+        public void IndicateStations()
         {
             if (IsCreated == false)
             {
@@ -149,24 +133,24 @@ namespace CSharpLight
                 Console.WriteLine("Укажите куда хотите ехать.");
                 _lastStation = GetStation(Console.ReadLine());
 
-                IsCreated = _firstStation == _lastStation ? false : true;
+                IsCreated = _firstStation != _lastStation;
 
                 if (IsCreated == false)
                 {
                     Console.Clear();
                     Console.WriteLine("Неверное направление. Попробуйте ещё.");
-                    SetDirection();
+                    IndicateStations();
                 }
-                ShowDirection();
+                ShowInformation();
             }
             else
             {
                 Console.Clear();
-                ShowDirection();
+                ShowInformation();
             }
         }
 
-        public void ShowDirection()
+        public void ShowInformation()
         {
             if (IsCreated)
             {
@@ -219,11 +203,6 @@ namespace CSharpLight
         public bool IsSelling { get; private set; }
         public int SoldCount { get; private set; }
 
-        public void SetBoolIsSelling(bool isSelling)
-        {
-            IsSelling = isSelling;
-        }
-
         public void SellTicets()
         {
             if (IsSelling == false)
@@ -243,40 +222,11 @@ namespace CSharpLight
 
     }
 
-    class Seat
-    {
-        private bool _isOcupped = false;
-        public int Number { get; private set; }
-
-        public Seat(int number)
-        {
-            Number = number;
-        }
-
-        public void ShowInfo()
-        {
-            Console.WriteLine(GetMessage());
-        }
-
-        public void OcupSeat()
-        {
-            _isOcupped = true;
-        }
-
-        private string GetMessage()
-        {
-            string message = _isOcupped ? $"{Number}) Место занято." : $"{Number}) Место свободно.";
-            return message;
-        }
-
-
-    }
-
     class Train
     {
-        private List<Seat> _seats = new List<Seat>();
-        private int _countSeats = 30;
-        private int _count;
+        private int _seatsInCar;
+        private int _maxCountSeats = 30;
+        private int _soldCount;
         public bool IsFull { get; private set; }
 
         public Train()
@@ -284,52 +234,44 @@ namespace CSharpLight
             IsFull = false;
         }
 
-        public void FormTrain(int SoldCount)
+        public void FillSeats(int soldCount)
         {
-            _count = SoldCount;
+            _soldCount = soldCount;
             if (IsFull == false)
             {
                 AddSeats();
-                for (int i = 0; i < SoldCount; i++)
-                {
-                    _seats[i].OcupSeat();
-                }
-                foreach (var seat in _seats)
-                {
-                    seat.ShowInfo();
-                }
                 IsFull = true;
+                Console.WriteLine($"Собрано {GetCars()} вагонов.\nМест занято {_seatsInCar} из {GetMaxSeats()}");
             }
             else
             {
                 Console.Clear();
-                Console.WriteLine($"Было собрано {GetCars()} вагонов.");
+                Console.WriteLine($"Собрано {GetCars()} вагонов.\nМест занято {_seatsInCar} из {GetMaxSeats()}");
             }
 
         }
 
-        private int GetSeats()
+        private void AddSeats()
         {
-            int seats = _countSeats * GetCars();
-            return seats;
+            for (int i = 0; i < _soldCount; i++)
+            {
+                _seatsInCar++;
+            }
+        }
+
+        private int GetMaxSeats()
+        {
+            return _maxCountSeats * GetCars();
         }
 
         private int GetCars()
         {
             int cars = 0;
-            for (int i = 0; (_countSeats * cars) < _count; i++)
+            while((_maxCountSeats * cars) < _soldCount)
             {
                 cars++;
             }
             return cars;
-        }
-
-        private void AddSeats()
-        {
-            for (int i = 0; i < GetSeats(); i++)
-            {
-                _seats.Add(new Seat(i + 1));
-            }
         }
 
     }
