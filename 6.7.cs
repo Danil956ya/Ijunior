@@ -7,6 +7,10 @@ namespace CSharpLight
     {
         static void Main(string[] args)
         {
+            const string CommandAssign = "1";
+            const string CommandSell = "2";
+            const string CommandForm = "3";
+            const string CommandSend = "4";
             TrainProgram program = new TrainProgram();
             bool isWork = true;
 
@@ -16,16 +20,16 @@ namespace CSharpLight
                 string input = Console.ReadLine();
                 switch (input)
                 {
-                    case "1":
+                    case CommandAssign:
                         program.AssignDirection();
                         break;
-                    case "2":
+                    case CommandSell:
                         program.SellTicets();
                         break;
-                    case "3":
+                    case CommandForm:
                         program.FormTrain();
                         break;
-                    case "4":
+                    case CommandSend:
                         program.SendTrain();
                         break;
                     default:
@@ -76,7 +80,6 @@ namespace CSharpLight
                 _office = new TicetsOffice();
                 _train = new Train();
                 Console.WriteLine("Поезд отправлен.");
-                return;
             }
             else
             {
@@ -125,29 +128,19 @@ namespace CSharpLight
 
         public void IndicateStations()
         {
-            if (IsCreated == false)
+            while (IsCreated == false)
             {
+                Console.Clear();
                 ShowStations();
                 Console.WriteLine("Укажите откуда хотите ехать.");
                 _firstStation = GetStation(Console.ReadLine());
                 Console.WriteLine("Укажите куда хотите ехать.");
                 _lastStation = GetStation(Console.ReadLine());
-
                 IsCreated = _firstStation != _lastStation;
-
-                if (IsCreated == false)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Неверное направление. Попробуйте ещё.");
-                    IndicateStations();
-                }
                 ShowInformation();
             }
-            else
-            {
-                Console.Clear();
-                ShowInformation();
-            }
+            Console.Clear();
+            ShowInformation();
         }
 
         public void ShowInformation()
@@ -162,23 +155,16 @@ namespace CSharpLight
         private string GetStation(string input)
         {
             string stationName = "default";
-            bool canGet = false;
 
             foreach (var station in _stations)
             {
                 if (station.Name.ToLower().Contains(input) || station.Name.Contains(input))
                 {
+                    Console.WriteLine($"Успешно. Выбрана станция - {station.Name}");
                     stationName = station.Name;
-                    canGet = true;
+                    return stationName;
                 }
             }
-
-            if (canGet == false)
-            {
-                Console.WriteLine("Попробуйте ещё раз.");
-                stationName = GetStation(Console.ReadLine());
-            }
-
             return stationName;
         }
 
@@ -239,7 +225,7 @@ namespace CSharpLight
             _soldCount = soldCount;
             if (IsFull == false)
             {
-                AddSeats();
+                _seatsInCar += _soldCount;
                 IsFull = true;
                 Console.WriteLine($"Собрано {GetCars()} вагонов.\nМест занято {_seatsInCar} из {GetMaxSeats()}");
             }
@@ -251,14 +237,6 @@ namespace CSharpLight
 
         }
 
-        private void AddSeats()
-        {
-            for (int i = 0; i < _soldCount; i++)
-            {
-                _seatsInCar++;
-            }
-        }
-
         private int GetMaxSeats()
         {
             return _maxCountSeats * GetCars();
@@ -266,12 +244,7 @@ namespace CSharpLight
 
         private int GetCars()
         {
-            int cars = 0;
-            while((_maxCountSeats * cars) < _soldCount)
-            {
-                cars++;
-            }
-            return cars;
+            return _soldCount / _maxCountSeats + 1;
         }
 
     }
