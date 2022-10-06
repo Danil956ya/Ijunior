@@ -16,7 +16,7 @@ namespace CSharpLight
 
             while (isWork)
             {
-                Console.WriteLine("1. Назначить направление. 2. Продать билеты. 3.Сформировать поезд 4. Отправить поезд.");
+                Console.WriteLine($"{CommandAssign}. Назначить направление. {CommandSell}. Продать билеты. {CommandForm}.Сформировать поезд {CommandSend}. Отправить поезд.");
                 string input = Console.ReadLine();
                 switch (input)
                 {
