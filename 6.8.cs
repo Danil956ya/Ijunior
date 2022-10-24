@@ -1,6 +1,3 @@
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-
 namespace _1._2
 {
     internal class Program
@@ -8,7 +5,20 @@ namespace _1._2
         static void Main(string[] args)
         {
             Field field = new Field();
-            field.Fight();
+            bool isWork = true;
+
+            while (isWork)
+            {
+                Console.WriteLine("Начинаем битву? \n1 - Да \n2 - Нет");
+                string input = Console.ReadLine();
+
+                if (input == "1")
+                    field.Fight();
+                else if (input == "2")
+                    isWork = false;
+                else
+                    Console.WriteLine("Попробуйте ещё раз.");
+            }
         }
 
     }
@@ -28,18 +38,12 @@ namespace _1._2
             battlers.Add(new Mage());
         }
 
-        public bool IsCreated()
+        private bool IsCreated()
         {
-            if (_firstBattler == null && _secondBattler == null)
-            {
-                ChooseBattler(out _firstBattler, 1);
-                ChooseBattler(out _secondBattler, 2);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            Console.Clear();
+            ChooseBattler(out _firstBattler, 1);
+            ChooseBattler(out _secondBattler, 2);
+            return _firstBattler != null && _secondBattler != null;
         }
 
         public void Fight()
@@ -52,22 +56,29 @@ namespace _1._2
                 {
                     _firstBattler.MakeTurn(ref _secondBattler);
                     _secondBattler.MakeTurn(ref _firstBattler);
-                    Console.WriteLine(_secondBattler.Name + " " + _secondBattler.Healt);
-                    Console.WriteLine(_firstBattler.Name + " " + _firstBattler.Healt);
+                    ShowStats();
                 }
                 if (_firstBattler.IsAlive())
                 {
-                    Console.WriteLine($"{_firstBattler.Name} - Побеждает!");
+                    Console.WriteLine($"{_firstBattler.Name} - Побеждает!\n");
                 }
                 else if (_secondBattler.IsAlive())
                 {
-                    Console.WriteLine($"{_secondBattler.Name} - Побеждает!");
+                    Console.WriteLine($"{_secondBattler.Name} - Побеждает!\n");
                 }
                 else
                 {
-                    Console.WriteLine("Ничья.");
+                    Console.WriteLine("Ничья.\n");
                 }
             }
+        }
+
+        private void ShowStats()
+        {
+            Console.WriteLine("------------------");
+            Console.WriteLine($"{_firstBattler.Name}: {_firstBattler.Healt} оз.");
+            Console.WriteLine($"{_secondBattler.Name}: {_secondBattler.Healt} оз.");
+            Console.WriteLine("------------------");
         }
 
         public void ChooseBattler(out Battler battler, int number)
@@ -114,6 +125,7 @@ namespace _1._2
 
             }
         }
+
     }
 
     class Battler
@@ -123,13 +135,66 @@ namespace _1._2
         public int Healt { get; protected set; }
         public int Armor { get; protected set; }
         public bool IsBlocking { get; protected set; }
+        public bool InStun { get; protected set; }
 
+        static private int _maxCooldown = 3;
+        static private int _minCooldown = 0;
+        private int _timeInStun = 2;
+        private int _cooldown = _maxCooldown;
         private bool _isUseble;
-        private int _cooldown;
-        private int _maxCooldown = 3;
-        private int _minCooldown = 0;
 
-        public void AttackEnemy(ref Battler enemy)
+
+        public void MakeTurn(ref Battler enemy)
+        {
+            const int MinTurn = 1;
+            const int MaxTurn = 4;
+            _isUseble = _cooldown <= _minCooldown;
+            _cooldown = _isUseble ? _maxCooldown : _minCooldown;
+            _cooldown -= 1;
+            Random random = new Random();
+            int stage = random.Next(MinTurn, MaxTurn);
+            IsBlocking = stage == (int)Stage.Shield;
+
+            if(InStun && _timeInStun > 0)
+            {
+                stage = 4;
+                IsBlocking = false;
+                _timeInStun--;
+            }else
+            {
+                InStun = false;
+            }
+
+           
+            switch (stage)
+            {
+                case (int)Stage.Attack:
+                    AttackEnemy(ref enemy);
+                    break;
+                case (int)Stage.Special:
+                    UseSpecial(ref enemy);
+                    break;
+                case (int)Stage.Shield:
+                    UseShield(ref enemy);
+                    break;
+                case (int)Stage.Stun:
+                    Console.WriteLine($"{Name} - в стане.");
+                    break;
+            }
+
+        }
+
+        public void InStuny()
+        {
+            InStun = !InStun;
+        }
+
+        public bool IsAlive()
+        {
+            return Healt > 0;
+        }
+
+        private void AttackEnemy(ref Battler enemy)
         {
             if (enemy.IsBlocking)
             {
@@ -138,17 +203,11 @@ namespace _1._2
             }
             else
             {
-                Console.WriteLine($"{Name} - Наносит {Damage} урона.");
                 TakeDamage(ref enemy);
             }
         }
 
-        protected void TakeDamage(ref Battler enemy)
-        {
-            enemy.Healt -= Damage;
-        }
-
-        public void UseSpecial(ref Battler enemy)
+        private void UseSpecial(ref Battler enemy)
         {
             if (_isUseble)
             {
@@ -160,39 +219,7 @@ namespace _1._2
             }
         }
 
-        protected virtual void SpecialAttack(ref Battler enemy)
-        {
-
-        }
-
-        public void MakeTurn(ref Battler enemy)
-        {
-            const int Attack = 1;
-            const int Special = 2;
-            const int Shield = 3;
-            _isUseble = _cooldown <= _minCooldown;
-            _cooldown = _isUseble ? _maxCooldown : _minCooldown;
-            _cooldown -= 1;
-            Random random = new Random();
-            int point = random.Next(1, 4);
-            IsBlocking = point == Shield;
-
-            switch (point)
-            {
-                case Attack:
-                    AttackEnemy(ref enemy);
-                    break;
-                case Special:
-                    UseSpecial(ref enemy);
-                    break;
-                case Shield:
-                    UseShield(ref enemy);
-                    break;
-            }
-
-        }
-
-        public void UseShield(ref Battler enemy)
+        private void UseShield(ref Battler enemy)
         {
             if (enemy.IsBlocking)
             {
@@ -201,24 +228,34 @@ namespace _1._2
             }
             else
             {
-                Console.WriteLine(Name + " в блоке.");
+                Shield(ref enemy);
             }
         }
 
-        public bool IsAlive()
+        protected virtual void TakeDamage(ref Battler enemy)
         {
-            return Healt > 0;
+            enemy.Healt -= Damage;
         }
 
+        protected virtual void SpecialAttack(ref Battler enemy)
+        {
+
+        }
+
+        protected virtual void Shield()
+        {
+            Console.WriteLine(Name + " в блоке.");
+        }
     }
 
     class Warrior : Battler
     {
         private string _name = "Warrior";
         private int _damage = 15;
-        private int _healts = 50;
+        private int _healts = 45;
         private int _armor = 10;
-        private int _buffAttack = 35;
+        private int _buffAttack = 25;
+        private int _buffRage = 3;
 
         public Warrior()
         {
@@ -230,10 +267,42 @@ namespace _1._2
 
         protected override void SpecialAttack(ref Battler enemy)
         {
-            base.Damage = _buffAttack;
+            Damage = _buffAttack;
             Console.WriteLine($"{Name} - Бросает стальной топор! Урон - {Damage}");
-            TakeDamage(ref enemy);
-            base.Damage = _damage;
+            base.TakeDamage(ref enemy);
+            Damage = _damage;
+        }
+
+        protected override void TakeDamage(ref Battler enemy)
+        {
+            int rage = 1;
+            if (_healts / 2 >= Healt)
+                rage = 2;
+            else if (_healts / 3 >= Healt)
+                rage = 3;
+
+            switch (rage)
+            {
+                case 1:
+                    Console.WriteLine($"{Name} - Бъёт кулаком! Урон - {Damage}");
+                    break;
+                case 2:
+                    Damage += _buffRage * rage;
+                    Console.WriteLine($"{Name} - Усиленно бъёт кулаком! Урон - {Damage}");
+                    break;
+                case 3:
+                    Damage += _buffRage * rage;
+                    Console.WriteLine($"{Name} - В ярости ударяет кулаком! Урон - {Damage}");
+                    break;
+
+            }
+            base.TakeDamage(ref enemy);
+            Damage = _damage;
+        }
+
+        protected override void Shield()
+        {
+            Console.WriteLine($"{Name} - Укрывается руками.");
         }
 
     }
@@ -244,6 +313,8 @@ namespace _1._2
         private int _damage = 20;
         private int _healts = 40;
         private int _armor = 5;
+        private int _vampiric = 1;
+        private int _multiply = 3;
 
         public Archer()
         {
@@ -255,11 +326,25 @@ namespace _1._2
 
         protected override void SpecialAttack(ref Battler enemy)
         {
-            Damage = _damage + enemy.Armor;
-            Console.WriteLine($"{Name} - Выпускает лунную стрелу! Урон - {Damage}");
-            TakeDamage(ref enemy);
+            Damage = _damage + (enemy.Healt / enemy.Armor);
+            _vampiric = ((enemy.Healt - enemy.Armor) / _multiply) >= 0 ? (enemy.Healt - enemy.Armor) / _multiply : 0;
+            Console.WriteLine($"{Name} - Выпускает кровавую стрелу! Урон - {Damage}, Лечение - {_vampiric}");
+            Healt += _vampiric;
+            base.TakeDamage(ref enemy);
             Damage = _damage;
         }
+
+        protected override void TakeDamage(ref Battler enemy)
+        {
+            base.TakeDamage(ref enemy);
+            Console.WriteLine($"{Name} - выпускает стрелу! Урон - {Damage}");
+        }
+
+        protected override void Shield()
+        {
+            Console.WriteLine($"{Name} - Укрылся в тени.");
+        }
+
     }
 
     class Druid : Battler
@@ -290,18 +375,26 @@ namespace _1._2
             else
             {
                 Healt += _buffheals;
-                Console.WriteLine($"{Name} - Лечит себя заклинанием! Востановление - {_buffheals}");
+                Console.WriteLine($"{Name} - Лечит себя целебной травой! Востановление - {_buffheals}");
             }
         }
 
+        protected override void TakeDamage(ref Battler enemy)
+        {
+            base.TakeDamage(ref enemy);
+            Console.WriteLine($"{Name} - Атакует терновыми шипами. Урон - {Damage}");
+        }
+
     }
+
     class Mage : Battler
     {
         private string _name = "Mage";
         private int _damage = 20;
-        private int _healts = 40;
-        private int _armor = 1;
+        private int _healts = 60;
+        private int _armor = 5;
         private int _firebollDamage = 30;
+        private int _buffheals = 20;
 
         public Mage()
         {
@@ -313,14 +406,43 @@ namespace _1._2
 
         protected override void SpecialAttack(ref Battler enemy)
         {
-            Damage = _firebollDamage;
-            Console.WriteLine($"{Name} - Вызывает фаерболл! Урон - {Damage}");
-            TakeDamage(ref enemy);
-            Damage = _damage;
+            const int MaxValue = 4;
+            const int MinValue = 1;
+            Random random = new Random();
+            int cpecial = random.Next(MinValue, MaxValue);
+
+            switch(cpecial)
+            {
+                case 1:
+                    Damage = _firebollDamage;
+                    Console.WriteLine($"{Name} - Вызывает фаерболл! Урон - {Damage}");
+                    base.TakeDamage(ref enemy);
+                    Damage = _damage;
+                    break;
+                case 2:
+                    Healt += _buffheals;
+                    Console.WriteLine($"{Name} - Лечит себя! Лечение - {_buffheals}");
+                    break;
+                case 3:
+                    Console.WriteLine($"{Name} - Заморозил {enemy.Name}.");
+                    enemy.InStuny();
+                    break;
+            }
+
+        }
+
+        protected override void TakeDamage(ref Battler enemy)
+        {
+            base.TakeDamage(ref enemy);
+            Console.WriteLine($"{Name} - Атакует заклинанием! Урон - {Damage}");
+        }
+
+        protected override void Shield()
+        {
+            Console.WriteLine($"{Name} - Укрывается магическим щитом!");
         }
 
     }
-
 
     class Knight : Battler
     {
@@ -353,6 +475,19 @@ namespace _1._2
             }
         }
 
+        protected override void TakeDamage(ref Battler enemy)
+        {
+            base.TakeDamage(ref enemy);
+            Console.WriteLine($"{Name} - Атакует мечом! Урон - {Damage}");
+        }
+
     }
 
+    enum Stage
+    {
+        Attack = 1,
+        Special,
+        Shield,
+        Stun
+    }
 }
