@@ -228,7 +228,7 @@ namespace _1._2
             }
             else
             {
-                Shield(ref enemy);
+                Shield();
             }
         }
 
