@@ -124,7 +124,6 @@ namespace _1._4
         public string Name { get; private set; }
         public int Price { get; private set; }
 
-
         public Good()
         {
             _goodslist.Add(new Good("Молоко", 50));
