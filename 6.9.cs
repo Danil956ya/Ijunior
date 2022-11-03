@@ -49,6 +49,7 @@ namespace _1._4
             }
             Console.WriteLine("Всех обслужили.");
         }
+
     }
 
     class Client
