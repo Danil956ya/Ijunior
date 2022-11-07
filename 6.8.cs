@@ -107,7 +107,6 @@ namespace LiteBattlers
             {
                 battlerNumber++;
                 Console.WriteLine(battlerNumber + " " + battler.Name);
-
             }
 
         }
