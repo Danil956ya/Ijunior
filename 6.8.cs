@@ -22,7 +22,9 @@ namespace LiteBattlers
                     isWork = false;
                 else
                     Console.WriteLine("Попробуйте ещё раз.");
+
             }
+
         }
 
     }
@@ -31,12 +33,6 @@ namespace LiteBattlers
     {
         private Battler _firstBattler;
         private Battler _secondBattler;
-
-        public Field()
-        {
-
-        }
-
 
         public void Fight()
         {
@@ -79,6 +75,7 @@ namespace LiteBattlers
                     return CreateBattlers()[result - 1];
                 }
             }
+
             return battler;
         }
 
@@ -101,12 +98,14 @@ namespace LiteBattlers
         private void ShowBattlers()
         {
             int battlerNumber = 0;
+
             foreach (var battler in CreateBattlers())
             {
                 battlerNumber++;
                 Console.WriteLine(battlerNumber + " " + battler.Name);
 
             }
+
         }
 
         private void ShowResult()
@@ -136,7 +135,6 @@ namespace LiteBattlers
         public int Damage { get; protected set; }
         public int Healts { get; protected set; }
         public int Armor { get; protected set; }
-
 
         public bool IsAlive()
         {
