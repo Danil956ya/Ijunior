@@ -36,18 +36,22 @@ namespace LiteBattlers
 
         public void Fight()
         {
+
             if (SelectedBattlers())
             {
                 Console.Clear();
                 Console.WriteLine($"Да начнётся битва! \n{_firstBattler.Name} vs {_secondBattler.Name}");
+
                 while (_firstBattler.IsAlive() && _secondBattler.IsAlive())
                 {
                     _firstBattler.Attack(_secondBattler);
                     _secondBattler.Attack(_firstBattler);
                     ShowStats();
                 }
+
                 ShowResult();
             }
+
         }
 
         private List<Battler> CreateBattlers()
