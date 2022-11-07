@@ -29,6 +29,7 @@ namespace _1._4
 
         public void ServeClients()
         {
+
             while(_clients.Count > 0)
             {
                 Console.Clear();
@@ -45,8 +46,10 @@ namespace _1._4
                     _clients.Dequeue();
                     Console.WriteLine("Клиент оплатил покупки.");
                 }
+
                 Console.ReadKey();
             }
+
             Console.WriteLine("Всех обслужили.");
         }
 
@@ -57,6 +60,8 @@ namespace _1._4
         private List<Good> _goods = new List<Good>();
         private int _minMoney = 100;
         private int _maxMoney = 500;
+        private int _minGoods = 5;
+        private int _maxGoods = 12;
 
         public int Money { get; private set; }
 
@@ -77,42 +82,48 @@ namespace _1._4
 
         public bool BuyGoods()
         {
-            return Money >= GoodsTotalPrice();
-        }
-
-        private void AddGoods()
-        {
-            Random random = new Random();
-            int randomGoods = random.Next(4,11);
-            for (int i = 0; i < randomGoods; i++)
-            {
-                _goods.Add(new Good().AddRandomGood());
-            }
+            return Money >= ShowTotalPrice();
         }
 
         public void ShowStat()
         {
             Console.WriteLine($"Денег у клиента - {Money}.");
             ShowGoods();
-            Console.WriteLine($"Стоймость покупок - {GoodsTotalPrice()}.");
+            Console.WriteLine($"Стоймость покупок - {ShowTotalPrice()}.");
             Console.WriteLine(BuyGoods().ToString());
+        }
+
+        private void AddGoods()
+        {
+            Random random = new Random();
+            int randomGoods = random.Next(_minGoods,_maxGoods);
+
+            for (int i = 0; i < randomGoods; i++)
+            {
+                _goods.Add(new Good().AddRandomGood());
+            }
+
         }
 
         private void ShowGoods()
         {
+
             foreach (var good in _goods)
             {
                 good.ShowStat();
             }
+
         }
 
-        private int GoodsTotalPrice()
+        private int ShowTotalPrice()
         {
             int total = 0;
+
             foreach(var good in _goods)
             {
                 total += good.Price;
             }
+
             return total;
         }
 
@@ -120,26 +131,26 @@ namespace _1._4
 
     class Good
     {
-        private List<Good> _goodslist = new List<Good>();
+        private List<Good> _goods = new List<Good>();
 
         public string Name { get; private set; }
         public int Price { get; private set; }
 
         public Good()
         {
-            _goodslist.Add(new Good("Молоко", 50));
-            _goodslist.Add(new Good("Морковь", 20));
-            _goodslist.Add(new Good("Макароны", 35));
-            _goodslist.Add(new Good("Картошка", 20));
-            _goodslist.Add(new Good("Лук", 20));
-            _goodslist.Add(new Good("Печенье", 35));
-            _goodslist.Add(new Good("Шоколад", 60));
-            _goodslist.Add(new Good("Хлеб", 35));
-            _goodslist.Add(new Good("Доширак", 25));
-            _goodslist.Add(new Good("Гречка", 60));
-            _goodslist.Add(new Good("Рис", 60));
-            _goodslist.Add(new Good("Кола", 45));
-            _goodslist.Add(new Good("Фанта", 45));
+            _goods.Add(new Good("Молоко", 50));
+            _goods.Add(new Good("Морковь", 20));
+            _goods.Add(new Good("Макароны", 35));
+            _goods.Add(new Good("Картошка", 20));
+            _goods.Add(new Good("Лук", 20));
+            _goods.Add(new Good("Печенье", 35));
+            _goods.Add(new Good("Шоколад", 60));
+            _goods.Add(new Good("Хлеб", 35));
+            _goods.Add(new Good("Доширак", 25));
+            _goods.Add(new Good("Гречка", 60));
+            _goods.Add(new Good("Рис", 60));
+            _goods.Add(new Good("Кола", 45));
+            _goods.Add(new Good("Фанта", 45));
         }
 
         public Good(string name, int price)
@@ -151,8 +162,8 @@ namespace _1._4
         public Good AddRandomGood()
         {
             Random random = new Random();
-            int rndGood = random.Next(0, _goodslist.Count);
-            return _goodslist[rndGood];
+            int rndGood = random.Next(0, _goods.Count);
+            return _goods[rndGood];
         }
 
         public void ShowStat()
