@@ -110,6 +110,7 @@ namespace LiteBattlers
 
         private void ShowResult()
         {
+
             if (_firstBattler.IsAlive())
             {
                 Console.WriteLine($"{_firstBattler.Name} - Побеждает!\n");
@@ -122,6 +123,7 @@ namespace LiteBattlers
             {
                 Console.WriteLine("Ничья.\n");
             }
+
         }
 
     }
