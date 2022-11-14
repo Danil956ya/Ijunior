@@ -36,6 +36,8 @@ namespace LiteBattlers
 
         public void Fight()
         {
+            _firstBattler = SelectBattler(1);
+            _secondBattler = SelectBattler(2);
 
             if (SelectedBattlers())
             {
@@ -74,10 +76,12 @@ namespace LiteBattlers
                 Console.WriteLine($"Введите номер бойца №{number}, которого хотите выбрать.");
                 ShowBattlers();
                 string input = Console.ReadLine();
+
                 if (int.TryParse(input, out int result) && result > 0 && result < CreateBattlers().Count + 1)
                 {
                     return CreateBattlers()[result - 1];
                 }
+
             }
 
             return battler;
@@ -86,8 +90,6 @@ namespace LiteBattlers
         private bool SelectedBattlers()
         {
             Console.Clear();
-            _firstBattler = SelectBattler(1);
-            _secondBattler = SelectBattler(2);
             return _firstBattler != null && _secondBattler != null;
         }
 
@@ -159,6 +161,7 @@ namespace LiteBattlers
             {
                 UseAttack(enemy);
             }
+
         }
 
         protected virtual void UseAttack(Battler enemy, int damage)
@@ -205,31 +208,33 @@ namespace LiteBattlers
 
         protected override void UseAttack(Battler enemy)
         {
-            int rageMin = 1;
-            int rageMedium = 2;
-            int rageMax = 3;
-            int currentRage = rageMin;
+            const int RageMin = 1;
+            const int RageMedium = 2;
+            const int RageMax = 3;
+            int currentRage = RageMin;
 
-            if (_maxHealts / rageMedium >= Healts)
-                currentRage = rageMedium;
-            else if (_maxHealts / rageMax >= Healts)
-                currentRage = rageMax;
+            if (_maxHealts / RageMedium >= Healts)
+                currentRage = RageMedium;
+            else if (_maxHealts / RageMax >= Healts)
+                currentRage = RageMax;
 
             switch (currentRage)
             {
-                case 1:
+
+                case RageMin:
                     Console.WriteLine($"{Name} - Бъёт кулаком! Урон - {Damage}");
                     break;
-                case 2:
+                case RageMedium:
                     Damage += _buffRage * currentRage;
                     Console.WriteLine($"{Name} - Усиленно бъёт кулаком! Урон - {Damage}");
                     break;
-                case 3:
+                case RageMax:
                     Damage += _buffRage * currentRage;
                     Console.WriteLine($"{Name} - В ярости ударяет кулаком! Урон - {Damage}");
                     break;
 
             }
+
             base.UseAttack(enemy, Damage);
         }
 
@@ -281,6 +286,7 @@ namespace LiteBattlers
                 base.TakeDamage(damage);
                 Console.WriteLine($"{Name} - Ай!");
             }
+
         }
 
     }
@@ -301,6 +307,7 @@ namespace LiteBattlers
 
         protected override void UseSpecialAttack(Battler enemy)
         {
+
             if (Healts >= _maxHealts)
             {
                 Console.WriteLine($"{Name} - Слишком перелечил себя и умер!");
@@ -311,6 +318,7 @@ namespace LiteBattlers
                 Healts += _buffheals;
                 Console.WriteLine($"{Name} - Лечит себя целебной травой! Востановление - {_buffheals}");
             }
+
         }
 
         protected override void UseAttack(Battler enemy)
@@ -344,16 +352,18 @@ namespace LiteBattlers
         {
             const int MaxValue = 3;
             const int MinValue = 1;
+            const int SpellFireboll = 1;
+            const int SpellHeal = 2;
             Random random = new Random();
             int cpecial = random.Next(MinValue, MaxValue);
 
             switch (cpecial)
             {
-                case 1:
+                case SpellFireboll:
                     Console.WriteLine($"{Name} - Вызывает фаерболл! Урон - {_firebollDamage}");
                     base.UseAttack(enemy, _firebollDamage);
                     break;
-                case 2:
+                case SpellHeal:
                     Healts += _buffheals;
                     Console.WriteLine($"{Name} - Лечит себя! Лечение - {_buffheals}");
                     break;
@@ -390,6 +400,7 @@ namespace LiteBattlers
 
         protected override void UseSpecialAttack(Battler enemy)
         {
+
             if (_countUseSpecial > 0)
             {
                 Armor += _buffArmor;
@@ -400,6 +411,7 @@ namespace LiteBattlers
             {
                 Console.WriteLine("Слишком много брони.");
             }
+
         }
 
         protected override void UseAttack(Battler enemy)
@@ -410,8 +422,8 @@ namespace LiteBattlers
 
         protected override void TakeDamage(int damage)
         {
-                base.TakeDamage(damage);
-                Console.WriteLine($"{Name} - Ай!");  
+            base.TakeDamage(damage);
+            Console.WriteLine($"{Name} - Ай!");
         }
 
     }
