@@ -4,7 +4,6 @@ namespace LiteBattlers
 {
     internal class Program
     {
-        
         static void Main(string[] args)
         {
             Field field = new Field();
@@ -40,7 +39,7 @@ namespace LiteBattlers
             _firstBattler = SelectBattler(1);
             _secondBattler = SelectBattler(2);
 
-            if (SelectedBattlers())
+            if (AreSelectedBattlers())
             {
                 Console.Clear();
                 Console.WriteLine($"Да начнётся битва! \n{_firstBattler.Name} vs {_secondBattler.Name}");
@@ -79,16 +78,14 @@ namespace LiteBattlers
                 string input = Console.ReadLine();
 
                 if (int.TryParse(input, out int result) && result > 0 && result < CreateBattlers().Count + 1)
-                {
                     return CreateBattlers()[result - 1];
-                }
 
             }
 
             return battler;
         }
 
-        private bool SelectedBattlers()
+        private bool AreSelectedBattlers()
         {
             Console.Clear();
             return _firstBattler != null && _secondBattler != null;
@@ -118,17 +115,11 @@ namespace LiteBattlers
         {
 
             if (_firstBattler.IsAlive())
-            {
                 Console.WriteLine($"{_firstBattler.Name} - Побеждает!\n");
-            }
             else if (_secondBattler.IsAlive())
-            {
                 Console.WriteLine($"{_secondBattler.Name} - Побеждает!\n");
-            }
             else
-            {
                 Console.WriteLine("Ничья.\n");
-            }
 
         }
 
@@ -155,35 +146,23 @@ namespace LiteBattlers
             int Ability = random.Next(_rangeChance);
 
             if (_chanceAbility <= Ability)
-            {
                 UseSpecialAttack(enemy);
-            }
             else
-            {
                 UseAttack(enemy);
-            }
 
         }
 
         protected virtual void UseAttack(Battler enemy, int damage)
-        {
-            enemy.TakeDamage(damage);
-        }
+        { enemy.TakeDamage(damage); }
 
         protected virtual void UseAttack(Battler enemy)
-        {
-            enemy.TakeDamage(Damage);
-        }
+        { enemy.TakeDamage(Damage); }
 
         protected virtual void UseSpecialAttack(Battler enemy)
-        {
-
-        }
+        {  }
 
         protected virtual void TakeDamage(int damage)
-        {
-            Healts -= damage;
-        }
+        { Healts -= damage; }
 
     }
 
@@ -279,9 +258,7 @@ namespace LiteBattlers
             int dodge = random.Next(_rangeChance);
 
             if (_chanceDodge >= dodge)
-            {
                 Console.WriteLine($"{Name} - Увернулся");
-            }
             else
             {
                 base.TakeDamage(damage);
@@ -409,9 +386,7 @@ namespace LiteBattlers
                 Console.WriteLine($"{Name} - Увеличивает свою броню!");
             }
             else
-            {
                 Console.WriteLine("Слишком много брони.");
-            }
 
         }
 
