@@ -11,6 +11,7 @@ namespace _1._4
 
     class Market
     {
+        private List<Good> _products = new List<Good>();
         private Queue<Client> _clients = new Queue<Client>();
         private int _minClients = 3;
         private int _maxClients = 10;
@@ -20,36 +21,54 @@ namespace _1._4
             Random random = new Random();
             int countClients = random.Next(_minClients, _maxClients);
 
+            _products.Add(new Good("Молоко", 50));
+            _products.Add(new Good("Морковь", 20));
+            _products.Add(new Good("Макароны", 35));
+            _products.Add(new Good("Картошка", 20));
+            _products.Add(new Good("Лук", 20));
+            _products.Add(new Good("Печенье", 35));
+            _products.Add(new Good("Шоколад", 60));
+            _products.Add(new Good("Хлеб", 35));
+            _products.Add(new Good("Доширак", 25));
+            _products.Add(new Good("Гречка", 60));
+            _products.Add(new Good("Рис", 60));
+            _products.Add(new Good("Кола", 45));
+            _products.Add(new Good("Фанта", 45));
+
             for (int i = 0; i < countClients; i++)
             {
                 _clients.Enqueue(new Client());
             }
-
         }
 
         public void ServeClients()
         {
 
-            while(_clients.Count > 0)
+            foreach (var client in _clients)
+            {
+
+                client.AddGoods(_products);
+            }
+
+            while (_clients.Count > 0)
             {
                 Console.Clear();
                 Console.WriteLine($"В очереди {_clients.Count} человек");
                 var client = _clients.Peek();
                 client.ShowStat();
 
-                if (client.BuyGoods() == false)
+                if (client.IsMoneyEnough() == false)
                 {
-                    client.RemoveRandomGood();
+                    client.RemoveRandomProduct();
                 }
                 else
                 {
                     _clients.Dequeue();
-                    Console.WriteLine("Клиент оплатил покупки.");
+                    Console.WriteLine("\nКлиент оплатил покупки.");
                 }
-
+                Console.WriteLine("\nНажмите любую кнопку.");
                 Console.ReadKey();
             }
-
             Console.WriteLine("Всех обслужили.");
         }
 
@@ -57,7 +76,7 @@ namespace _1._4
 
     class Client
     {
-        private List<Good> _goods = new List<Good>();
+        private List<Good> _products = new List<Good>();
         private int _minMoney = 100;
         private int _maxMoney = 500;
         private int _minGoods = 5;
@@ -69,89 +88,66 @@ namespace _1._4
         {
             Random random = new Random();
             Money = random.Next(_minMoney, _maxMoney);
-            AddGoods();
         }
 
-        public void RemoveRandomGood()
+        public void RemoveRandomProduct()
         {
             Random random = new Random();
-            int randomGood = random.Next(1, _goods.Count - 1);
-            Console.WriteLine($"Убирает продукт - {_goods[randomGood].Name}");
-            _goods.RemoveAt(randomGood);
+            int randomGood = random.Next(0, _products.Count - 1);
+            Console.WriteLine($"\nУбирает продукт - {_products[randomGood].Name}");
+            _products.RemoveAt(randomGood);
         }
 
-        public bool BuyGoods()
+        public bool IsMoneyEnough()
         {
-            return Money >= ShowTotalPrice();
+            return Money >= GetTotalPrice();
         }
 
         public void ShowStat()
         {
-            Console.WriteLine($"Денег у клиента - {Money}.");
             ShowGoods();
-            Console.WriteLine($"Стоймость покупок - {ShowTotalPrice()}.");
-            Console.WriteLine(BuyGoods().ToString());
+            Console.WriteLine($"\nСтоймость покупок - {GetTotalPrice()}    Денег у клиента - {Money}.");
         }
 
-        private void AddGoods()
+        public void AddGoods(List<Good> goods)
         {
             Random random = new Random();
             int randomGoods = random.Next(_minGoods,_maxGoods);
 
             for (int i = 0; i < randomGoods; i++)
             {
-                _goods.Add(new Good().AddRandomGood());
+                _products.Add(goods[i].GetRandomGood(goods));
             }
-
         }
 
         private void ShowGoods()
         {
 
-            foreach (var good in _goods)
+            foreach (var product in _products)
             {
-                good.ShowStat();
+                product.ShowStat();
             }
-
         }
 
-        private int ShowTotalPrice()
+        private int GetTotalPrice()
         {
             int total = 0;
 
-            foreach(var good in _goods)
+            foreach(var good in _products)
             {
                 total += good.Price;
             }
-
             return total;
         }
-
     }
 
     class Good
     {
-        private List<Good> _goods = new List<Good>();
 
         public string Name { get; private set; }
         public int Price { get; private set; }
 
-        public Good()
-        {
-            _goods.Add(new Good("Молоко", 50));
-            _goods.Add(new Good("Морковь", 20));
-            _goods.Add(new Good("Макароны", 35));
-            _goods.Add(new Good("Картошка", 20));
-            _goods.Add(new Good("Лук", 20));
-            _goods.Add(new Good("Печенье", 35));
-            _goods.Add(new Good("Шоколад", 60));
-            _goods.Add(new Good("Хлеб", 35));
-            _goods.Add(new Good("Доширак", 25));
-            _goods.Add(new Good("Гречка", 60));
-            _goods.Add(new Good("Рис", 60));
-            _goods.Add(new Good("Кола", 45));
-            _goods.Add(new Good("Фанта", 45));
-        }
+        public Good() { }
 
         public Good(string name, int price)
         {
@@ -159,18 +155,17 @@ namespace _1._4
             Price = price;
         }
 
-        public Good AddRandomGood()
+        public Good GetRandomGood(List<Good> goods)
         {
             Random random = new Random();
-            int rndGood = random.Next(0, _goods.Count);
-            return _goods[rndGood];
+            int randomGood = random.Next(0, goods.Count);
+            return goods[randomGood];
         }
 
         public void ShowStat()
         {
             Console.WriteLine($"{Name} - {Price}");
         }
-
     }
 
 }
