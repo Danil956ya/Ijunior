@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 namespace LiteBattlers
 {
     internal class Program
@@ -22,11 +20,8 @@ namespace LiteBattlers
                     isWork = false;
                 else
                     Console.WriteLine("Попробуйте ещё раз.");
-
             }
-
         }
-
     }
 
     class Field
@@ -39,56 +34,46 @@ namespace LiteBattlers
             _firstBattler = SelectBattler(1);
             _secondBattler = SelectBattler(2);
 
-            if (AreSelectedBattlers())
+            Console.Clear();
+            Console.WriteLine($"Да начнётся битва! \n{_firstBattler.Name} vs {_secondBattler.Name}");
+
+            while (_firstBattler.IsAlive() && _secondBattler.IsAlive())
             {
-                Console.Clear();
-                Console.WriteLine($"Да начнётся битва! \n{_firstBattler.Name} vs {_secondBattler.Name}");
-
-                while (_firstBattler.IsAlive() && _secondBattler.IsAlive())
-                {
-                    _firstBattler.Attack(_secondBattler);
-                    _secondBattler.Attack(_firstBattler);
-                    ShowStats();
-                }
-
-                ShowResult();
+                _firstBattler.Attack(_secondBattler);
+                _secondBattler.Attack(_firstBattler);
+                ShowStats();
             }
 
+            ShowResult();
         }
 
         private List<Battler> CreateBattlers()
         {
-            List<Battler> _battlers = new List<Battler>();
-            _battlers.Add(new Warrior());
-            _battlers.Add(new Archer());
-            _battlers.Add(new Druid());
-            _battlers.Add(new Knight());
-            _battlers.Add(new Mage());
-            return _battlers;
+            List<Battler> battlers = new List<Battler>();
+            battlers.Add(new Warrior());
+            battlers.Add(new Archer());
+            battlers.Add(new Druid());
+            battlers.Add(new Knight());
+            battlers.Add(new Mage());
+            return battlers;
         }
 
         private Battler SelectBattler(int number)
         {
-            Battler battler = null;
+            Battler Battler = null;
+            List<Battler> battlers = CreateBattlers();
 
-            while (battler == null)
+            while(Battler == null)
             {
                 Console.WriteLine($"Введите номер бойца №{number}, которого хотите выбрать.");
                 ShowBattlers();
                 string input = Console.ReadLine();
 
-                if (int.TryParse(input, out int result) && result > 0 && result < CreateBattlers().Count + 1)
-                    return CreateBattlers()[result - 1];
-
+                if (int.TryParse(input, out int result) && result > 0 && result <= battlers.Count)
+                    return battlers[result - 1];
             }
 
-            return battler;
-        }
-
-        private bool AreSelectedBattlers()
-        {
-            Console.Clear();
-            return _firstBattler != null && _secondBattler != null;
+            return null;
         }
 
         private void ShowStats()
@@ -108,7 +93,6 @@ namespace LiteBattlers
                 battlerNumber++;
                 Console.WriteLine(battlerNumber + " " + battler.Name);
             }
-
         }
 
         private void ShowResult()
@@ -120,9 +104,7 @@ namespace LiteBattlers
                 Console.WriteLine($"{_secondBattler.Name} - Побеждает!\n");
             else
                 Console.WriteLine("Ничья.\n");
-
         }
-
     }
 
     class Battler
@@ -149,21 +131,19 @@ namespace LiteBattlers
                 UseSpecialAttack(enemy);
             else
                 UseAttack(enemy);
-
         }
 
-        protected virtual void UseAttack(Battler enemy, int damage)
-        { enemy.TakeDamage(damage); }
+        public virtual void TakeDamage(int damage)
+        { 
+            Healts -= damage; 
+        }
 
         protected virtual void UseAttack(Battler enemy)
-        { enemy.TakeDamage(Damage); }
+        { 
+            enemy.TakeDamage(Damage); 
+        }
 
-        protected virtual void UseSpecialAttack(Battler enemy)
-        {  }
-
-        protected virtual void TakeDamage(int damage)
-        { Healts -= damage; }
-
+        protected virtual void UseSpecialAttack(Battler enemy) { }
     }
 
     class Warrior : Battler
@@ -183,7 +163,7 @@ namespace LiteBattlers
         protected override void UseSpecialAttack(Battler enemy)
         {
             Console.WriteLine($"{Name} - Бросает стальной топор! Урон - {_buffAttack}");
-            base.UseAttack(enemy, _buffAttack);
+            enemy.TakeDamage(_buffAttack);
         }
 
         protected override void UseAttack(Battler enemy)
@@ -192,6 +172,7 @@ namespace LiteBattlers
             const int RageMedium = 2;
             const int RageMax = 3;
             int currentRage = RageMin;
+            int currentDamage = Damage;
 
             if (_maxHealts / RageMedium >= Healts)
                 currentRage = RageMedium;
@@ -205,25 +186,24 @@ namespace LiteBattlers
                     Console.WriteLine($"{Name} - Бъёт кулаком! Урон - {Damage}");
                     break;
                 case RageMedium:
-                    Damage += _buffRage * currentRage;
+                    currentDamage = _buffRage * currentRage;
                     Console.WriteLine($"{Name} - Усиленно бъёт кулаком! Урон - {Damage}");
                     break;
                 case RageMax:
-                    Damage += _buffRage * currentRage;
+                    currentDamage = _buffRage * currentRage;
                     Console.WriteLine($"{Name} - В ярости ударяет кулаком! Урон - {Damage}");
                     break;
 
             }
 
-            base.UseAttack(enemy, Damage);
+            enemy.TakeDamage(currentDamage);
         }
 
-        protected override void TakeDamage(int damage)
+        public override void TakeDamage(int damage)
         {
             base.TakeDamage(damage);
             Console.WriteLine($"{Name} - Аухг.");
         }
-
     }
 
     class Archer : Battler
@@ -240,19 +220,7 @@ namespace LiteBattlers
             Armor = 5;
         }
 
-        protected override void UseSpecialAttack(Battler enemy)
-        {
-            Console.WriteLine($"{Name} - выпускает ледяную стрелу! Урон - {Damage + _buffDamage}");
-            base.UseAttack(enemy, Damage + _buffDamage);
-        }
-
-        protected override void UseAttack(Battler enemy)
-        {
-            Console.WriteLine($"{Name} - выпускает стрелу! Урон - {Damage}");
-            base.UseAttack(enemy);
-        }
-
-        protected override void TakeDamage(int damage)
+        public override void TakeDamage(int damage)
         {
             Random random = new Random();
             int dodge = random.Next(_rangeChance);
@@ -267,6 +235,17 @@ namespace LiteBattlers
 
         }
 
+        protected override void UseSpecialAttack(Battler enemy)
+        {
+            Console.WriteLine($"{Name} - выпускает ледяную стрелу! Урон - {Damage + _buffDamage}");
+            enemy.TakeDamage(Damage + _buffDamage);
+        }
+
+        protected override void UseAttack(Battler enemy)
+        {
+            Console.WriteLine($"{Name} - выпускает стрелу! Урон - {Damage}");
+            enemy.TakeDamage(Damage);
+        }
     }
 
     class Druid : Battler
@@ -283,6 +262,12 @@ namespace LiteBattlers
             Armor = 5;
         }
 
+        public override void TakeDamage(int damage)
+        {
+            base.TakeDamage(damage);
+            Console.WriteLine($"{Name} - Больно!");
+        }
+
         protected override void UseSpecialAttack(Battler enemy)
         {
 
@@ -296,21 +281,13 @@ namespace LiteBattlers
                 Healts += _buffheals;
                 Console.WriteLine($"{Name} - Лечит себя целебной травой! Востановление - {_buffheals}");
             }
-
         }
 
         protected override void UseAttack(Battler enemy)
         {
             Console.WriteLine($"{Name} - Атакует терновыми шипами. Урон - {Damage}");
-            base.UseAttack(enemy);
+            enemy.TakeDamage(Damage);
         }
-
-        protected override void TakeDamage(int damage)
-        {
-            base.TakeDamage(damage);
-            Console.WriteLine($"{Name} - Больно!");
-        }
-
     }
 
     class Mage : Battler
@@ -326,6 +303,12 @@ namespace LiteBattlers
             Armor = 5;
         }
 
+        public override void TakeDamage(int damage)
+        {
+            base.TakeDamage(damage);
+            Console.WriteLine($"{Name} - Ауч!");
+        }
+
         protected override void UseSpecialAttack(Battler enemy)
         {
             const int MaxValue = 3;
@@ -339,7 +322,7 @@ namespace LiteBattlers
             {
                 case SpellFireboll:
                     Console.WriteLine($"{Name} - Вызывает фаерболл! Урон - {_firebollDamage}");
-                    base.UseAttack(enemy, _firebollDamage);
+                    enemy.TakeDamage(_firebollDamage);
                     break;
                 case SpellHeal:
                     Healts += _buffheals;
@@ -352,15 +335,8 @@ namespace LiteBattlers
         protected override void UseAttack(Battler enemy)
         {
             Console.WriteLine($"{Name} - Атакует заклинанием! Урон - {Damage}");
-            base.UseAttack(enemy);
+            enemy.TakeDamage(Damage);
         }
-
-        protected override void TakeDamage(int damage)
-        {
-            base.TakeDamage(damage);
-            Console.WriteLine($"{Name} - Ауч!");
-        }
-
     }
 
     class Knight : Battler
@@ -376,6 +352,12 @@ namespace LiteBattlers
             Armor = 5;
         }
 
+        public override void TakeDamage(int damage)
+        {
+            base.TakeDamage(damage);
+            Console.WriteLine($"{Name} - Ай!");
+        }
+
         protected override void UseSpecialAttack(Battler enemy)
         {
 
@@ -386,22 +368,15 @@ namespace LiteBattlers
                 Console.WriteLine($"{Name} - Увеличивает свою броню!");
             }
             else
+            {
                 Console.WriteLine("Слишком много брони.");
-
+            }    
         }
 
         protected override void UseAttack(Battler enemy)
         {
             Console.WriteLine($"{Name} - Атакует мечом! Урон - {Damage}");
-            base.UseAttack(enemy);
+            enemy.TakeDamage(Damage);
         }
-
-        protected override void TakeDamage(int damage)
-        {
-            base.TakeDamage(damage);
-            Console.WriteLine($"{Name} - Ай!");
-        }
-
     }
-
 }
