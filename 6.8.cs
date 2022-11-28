@@ -5,9 +5,9 @@ namespace LiteBattlers
         static void Main(string[] args)
         {
             Field field = new Field();
+            const string CommandFight = "1";
+            const string CommandExit = "2";
             bool isWork = true;
-            string CommandFight = "1";
-            string CommandExit = "2";
 
             while (isWork)
             {
@@ -60,27 +60,29 @@ namespace LiteBattlers
 
         private Battler SelectBattler(int number)
         {
-            Battler Battler = null;
+            bool isWork = true;
             List<Battler> battlers = CreateBattlers();
 
-            while(Battler == null)
+            while (isWork)
             {
                 Console.WriteLine($"Введите номер бойца №{number}, которого хотите выбрать.");
                 ShowBattlers();
                 string input = Console.ReadLine();
 
                 if (int.TryParse(input, out int result) && result > 0 && result <= battlers.Count)
+                {
                     return battlers[result - 1];
+                    isWork = false;
+                }
             }
-
             return null;
         }
 
         private void ShowStats()
         {
             Console.WriteLine("------------------");
-            Console.WriteLine($"{_firstBattler.Name}: {_firstBattler.Healts} оз.");
-            Console.WriteLine($"{_secondBattler.Name}: {_secondBattler.Healts} оз.");
+            Console.WriteLine($"{_firstBattler.Name}: {_firstBattler.Health} оз.");
+            Console.WriteLine($"{_secondBattler.Name}: {_secondBattler.Health} оз.");
             Console.WriteLine("------------------");
         }
 
@@ -114,33 +116,33 @@ namespace LiteBattlers
 
         public string Name { get; protected set; }
         public int Damage { get; protected set; }
-        public int Healts { get; protected set; }
+        public int Health { get; protected set; }
         public int Armor { get; protected set; }
 
         public bool IsAlive()
         {
-            return Healts > 0;
+            return Health > 0;
         }
 
         public void Attack(Battler enemy)
         {
             Random random = new Random();
-            int Ability = random.Next(_rangeChance);
+            int ability = random.Next(_rangeChance);
 
-            if (_chanceAbility <= Ability)
+            if (_chanceAbility <= ability)
                 UseSpecialAttack(enemy);
             else
                 UseAttack(enemy);
         }
 
         public virtual void TakeDamage(int damage)
-        { 
-            Healts -= damage; 
+        {
+            Health -= damage;
         }
 
         protected virtual void UseAttack(Battler enemy)
-        { 
-            enemy.TakeDamage(Damage); 
+        {
+            enemy.TakeDamage(Damage);
         }
 
         protected virtual void UseSpecialAttack(Battler enemy) { }
@@ -156,8 +158,14 @@ namespace LiteBattlers
         {
             Name = "Warrior";
             Damage = 15;
-            Healts = 45;
+            Health = 45;
             Armor = 10;
+        }
+
+        public override void TakeDamage(int damage)
+        {
+            base.TakeDamage(damage);
+            Console.WriteLine($"{Name} - Аухг.");
         }
 
         protected override void UseSpecialAttack(Battler enemy)
@@ -174,24 +182,24 @@ namespace LiteBattlers
             int currentRage = RageMin;
             int currentDamage = Damage;
 
-            if (_maxHealts / RageMedium >= Healts)
+            if (_maxHealts / RageMedium >= Health)
                 currentRage = RageMedium;
-            else if (_maxHealts / RageMax >= Healts)
+            else if (_maxHealts / RageMax >= Health)
                 currentRage = RageMax;
 
             switch (currentRage)
             {
 
                 case RageMin:
-                    Console.WriteLine($"{Name} - Бъёт кулаком! Урон - {Damage}");
+                    Console.WriteLine($"{Name} - Бъёт кулаком! Урон - {currentDamage}");
                     break;
                 case RageMedium:
                     currentDamage = _buffRage * currentRage;
-                    Console.WriteLine($"{Name} - Усиленно бъёт кулаком! Урон - {Damage}");
+                    Console.WriteLine($"{Name} - Усиленно бъёт кулаком! Урон - {currentDamage}");
                     break;
                 case RageMax:
                     currentDamage = _buffRage * currentRage;
-                    Console.WriteLine($"{Name} - В ярости ударяет кулаком! Урон - {Damage}");
+                    Console.WriteLine($"{Name} - В ярости ударяет кулаком! Урон - {currentDamage}");
                     break;
 
             }
@@ -199,11 +207,6 @@ namespace LiteBattlers
             enemy.TakeDamage(currentDamage);
         }
 
-        public override void TakeDamage(int damage)
-        {
-            base.TakeDamage(damage);
-            Console.WriteLine($"{Name} - Аухг.");
-        }
     }
 
     class Archer : Battler
@@ -216,7 +219,7 @@ namespace LiteBattlers
         {
             Name = "Archer";
             Damage = 20;
-            Healts = 40;
+            Health = 40;
             Armor = 5;
         }
 
@@ -226,13 +229,14 @@ namespace LiteBattlers
             int dodge = random.Next(_rangeChance);
 
             if (_chanceDodge >= dodge)
+            {
                 Console.WriteLine($"{Name} - Увернулся");
+            }
             else
             {
                 base.TakeDamage(damage);
                 Console.WriteLine($"{Name} - Ай!");
             }
-
         }
 
         protected override void UseSpecialAttack(Battler enemy)
@@ -258,7 +262,7 @@ namespace LiteBattlers
         {
             Name = "Druid";
             Damage = 20;
-            Healts = 50;
+            Health = 50;
             Armor = 5;
         }
 
@@ -271,14 +275,14 @@ namespace LiteBattlers
         protected override void UseSpecialAttack(Battler enemy)
         {
 
-            if (Healts >= _maxHealts)
+            if (Health >= _maxHealts)
             {
                 Console.WriteLine($"{Name} - Слишком перелечил себя и умер!");
-                Healts = _minHealts;
+                Health = _minHealts;
             }
             else
             {
-                Healts += _buffheals;
+                Health += _buffheals;
                 Console.WriteLine($"{Name} - Лечит себя целебной травой! Востановление - {_buffheals}");
             }
         }
@@ -292,6 +296,11 @@ namespace LiteBattlers
 
     class Mage : Battler
     {
+        private const int SpellFireboll = 1;
+        private const int SpellHeal = 2;
+
+        private int[] _spells = { SpellFireboll, SpellHeal };
+
         private int _firebollDamage = 30;
         private int _buffheals = 20;
 
@@ -299,7 +308,7 @@ namespace LiteBattlers
         {
             Name = "Mage";
             Damage = 20;
-            Healts = 60;
+            Health = 60;
             Armor = 5;
         }
 
@@ -311,25 +320,19 @@ namespace LiteBattlers
 
         protected override void UseSpecialAttack(Battler enemy)
         {
-            const int MaxValue = 3;
-            const int MinValue = 1;
-            const int SpellFireboll = 1;
-            const int SpellHeal = 2;
             Random random = new Random();
-            int cpecial = random.Next(MinValue, MaxValue);
+            int special = random.Next(_spells[0], _spells[1]);
 
-            switch (cpecial)
+            if (special == _spells[0])
             {
-                case SpellFireboll:
-                    Console.WriteLine($"{Name} - Вызывает фаерболл! Урон - {_firebollDamage}");
-                    enemy.TakeDamage(_firebollDamage);
-                    break;
-                case SpellHeal:
-                    Healts += _buffheals;
-                    Console.WriteLine($"{Name} - Лечит себя! Лечение - {_buffheals}");
-                    break;
+                Console.WriteLine($"{Name} - Вызывает фаерболл! Урон - {_firebollDamage}");
+                enemy.TakeDamage(_firebollDamage);
             }
-
+            else if (special == _spells[1])
+            {
+                Health += _buffheals;
+                Console.WriteLine($"{Name} - Лечит себя! Лечение - {_buffheals}");
+            }
         }
 
         protected override void UseAttack(Battler enemy)
@@ -348,7 +351,7 @@ namespace LiteBattlers
         {
             Name = "Knight";
             Damage = 10;
-            Healts = 90;
+            Health = 90;
             Armor = 5;
         }
 
@@ -370,7 +373,7 @@ namespace LiteBattlers
             else
             {
                 Console.WriteLine("Слишком много брони.");
-            }    
+            }
         }
 
         protected override void UseAttack(Battler enemy)
