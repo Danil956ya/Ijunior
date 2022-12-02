@@ -1,3 +1,5 @@
+using System.Data.SqlTypes;
+
 namespace _1._4
 {
     internal class Program
@@ -11,16 +13,15 @@ namespace _1._4
 
     class Market
     {
+        private Random _random = new Random();
         private List<Product> _products = new List<Product>();
         private Queue<Client> _clients = new Queue<Client>();
-        private int _minClients = 3;
-        private int _maxClients = 10;
 
         public Market()
         {
-            Random random = new Random();
-            int countClients = random.Next(_minClients, _maxClients);
-
+            int minClients = 3;
+            int maxClients = 10;
+            int countClients = _random.Next(minClients, maxClients);
             _products.Add(new Product("Молоко", 50));
             _products.Add(new Product("Морковь", 20));
             _products.Add(new Product("Макароны", 35));
@@ -50,7 +51,7 @@ namespace _1._4
                 var client = _clients.Peek();
                 client.ShowStat();
 
-                if (client.IsMoneyEnough() == false)
+                if (client.IsEnough == false)
                 {
                     client.RemoveRandomProduct();
                 }
@@ -71,43 +72,32 @@ namespace _1._4
 
     class Client
     {
+        private Random _random = new Random();
         private List<Product> _products = new List<Product>();
-        private int _minGoods = 5;
-        private int _maxGoods = 12;
 
         public int Money { get; private set; }
         public int Bagage { get; private set; }
+        public bool IsEnough { get { return Money >= GetTotalPrice(); } }
 
         public Client(List<Product> products)
         {
-            Random random = new Random();
             int minMoney = 100;
             int maxMoney = 500;
-            Money = random.Next(minMoney, maxMoney);
-            Bagage = random.Next(_minGoods, _maxGoods);
+            int _minGoods = 5;
+            int _maxGoods = 12;
+            Money = _random.Next(minMoney, maxMoney);
+            Bagage = _random.Next(_minGoods, _maxGoods);
 
             for (int i = 0; i < Bagage; i++)
             {
-                _products.Add(GetRandomGood(products));
+                int randomProduct = _random.Next(0, products.Count);
+                _products.Add(products[randomProduct]);
             }
-        }
-
-        public Product GetRandomGood(List<Product> products)
-        {
-            Random random = new Random();
-            int randomGood = random.Next(0, products.Count);
-            return products[randomGood];
-        }
-
-        public bool IsMoneyEnough()
-        {
-            return Money >= GetTotalPrice();
         }
 
         public void RemoveRandomProduct()
         {
-            Random random = new Random();
-            int randomGood = random.Next(0, _products.Count - 1);
+            int randomGood = _random.Next(0, _products.Count);
             Console.WriteLine($"\nУбирает продукт - {_products[randomGood].Name}");
             _products.RemoveAt(randomGood);
         }
