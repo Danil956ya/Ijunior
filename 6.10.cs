@@ -35,6 +35,7 @@ namespace Ijunior
             }
             ShowResult();
         }
+
         private void ShowResult()
         {
             if(_armyRed.GetArmyCount() <= 0)
@@ -201,6 +202,4 @@ namespace Ijunior
             solder.TakeDamage(_buffDamage);
         }
     }
-
-
 }
