@@ -7,64 +7,62 @@ namespace Ijunior
         static void Main(string[] args)
         {
             Field field = new Field();
-            field.ShowTwoArmy();
             field.Fight();
         }
     }
+
     class Field
     {
         private Army _armyRed = new Army("Red");
         private Army _armyBlue = new Army("Blue");
-        private Solder _solderRed;
-        private Solder _solderBlue;
 
         public void Fight()
         {
-            while(_armyRed.GetArmyCount() > 0 && _armyBlue.GetArmyCount() > 0)
+            while(_armyRed.GetSoldersCount() > 0 && _armyBlue.GetSoldersCount() > 0)
             {
-                _solderRed = _armyRed.GetSolder();
-                _solderBlue = _armyBlue.GetSolder();
-                _solderRed.TakeDamage(_solderBlue.Damage);
-                _solderRed.UseSpecial(_solderBlue);
-                _solderBlue.TakeDamage(_solderRed.Damage);
-                _solderBlue.UseSpecial(_solderRed);
-                RemoveSolder();
-                ShowTwoArmy();
+                ShowArmys();
+                Solder SolderRed = _armyRed.GetSolder();
+                Solder SolderBlue = _armyBlue.GetSolder();
+                SolderRed.TakeDamage(SolderBlue.Damage);
+                SolderRed.UseSpecial(SolderBlue);
+                SolderBlue.TakeDamage(SolderRed.Damage);
+                SolderBlue.UseSpecial(SolderRed);
+                RemoveSolder(SolderRed);
+                RemoveSolder(SolderBlue);
                 Console.ReadKey();
                 Console.Clear();
             }
             ShowResult();
         }
 
+        public void ShowArmys()
+        {
+            Console.WriteLine("_______________________");
+            Console.WriteLine($"Армия {_armyBlue.Name} - кол-во: {_armyBlue.GetSoldersCount()}");
+            _armyBlue.ShowInfo();
+            Console.WriteLine("_______________________");
+            Console.WriteLine($"Армия {_armyRed.Name}  - кол-во: {_armyRed.GetSoldersCount()}");
+            _armyRed.ShowInfo();
+            Console.WriteLine("_______________________");
+        }
+
         private void ShowResult()
         {
-            if(_armyRed.GetArmyCount() <= 0)
+            if(_armyRed.GetSoldersCount() <= 0)
             {
                 Console.WriteLine("Победила армия синих");
             }
-            if(_armyBlue.GetArmyCount() <= 0)
+            if(_armyBlue.GetSoldersCount() <= 0)
             {
                 Console.WriteLine("Победила армия красных");
             }
         }
 
-        public void ShowTwoArmy()
+        private void RemoveSolder(Solder solder)
         {
-            Console.WriteLine($"Армия {_armyBlue.Name} - кол-во: {_armyBlue.GetArmyCount()}");
-            _armyBlue.ShowArmy();
-            Console.WriteLine($"Армия {_armyRed.Name}  - кол-во: {_armyRed.GetArmyCount()}");
-            _armyRed.ShowArmy();
-        }
-
-        private void RemoveSolder()
-        {
-            if(_solderBlue.IsAlive() == false)
+            if(solder.IsAlive() == false)
             {
-                _armyBlue.RemoveFromField(_solderBlue);
-            }
-            else if(_solderRed.IsAlive() == false)
-            {
-                _armyRed.RemoveFromField(_solderRed);
+                _armyBlue.RemoveFromField(solder);
             }
         }
     }
@@ -72,19 +70,19 @@ namespace Ijunior
 
     class Army
     {
-        const int MaxCount = 10;
-        const int MinCount = 5;
         public string Name { get; private set; }
+        private const int MaxCount = 10;
+        private const int MinCount = 5;
         private List<Solder> _solders = new List<Solder>();
         private Random _random = new Random();
 
         public Army(string name)
         {
             Name = name;
-            SetArmy();
+            CreateSolders();
         }
 
-        public int GetArmyCount()
+        public int GetSoldersCount()
         {
             return _solders.Count;
         }
@@ -99,27 +97,7 @@ namespace Ijunior
             _solders.Remove(solder);
         }
 
-        private void SetArmy()
-        {
-            int armyCount = _random.Next(MinCount, MaxCount);
-
-            for (int i = 0; i < armyCount; i++)
-            {
-                int rank = _random.Next(0, SoldersRank().Count);
-                _solders.Add(SoldersRank()[rank]);
-            }
-        }
-
-        private List<Solder> SoldersRank()
-        {
-            List<Solder> soldersRank = new List<Solder>();
-            soldersRank.Add(new Melee());
-            soldersRank.Add(new Range());
-            soldersRank.Add(new Tank());
-            return soldersRank;
-        }
-
-        public void ShowArmy()
+        public void ShowInfo()
         {
             foreach (var solder in _solders)
             {
@@ -127,6 +105,25 @@ namespace Ijunior
             }
         }
 
+        private void CreateSolders()
+        {
+            int armyCount = _random.Next(MinCount, MaxCount);
+
+            for (int i = 0; i < armyCount; i++)
+            {
+                int rank = _random.Next(0, GetSoldersRank().Count);
+                _solders.Add(GetSoldersRank()[rank]);
+            }
+        }
+
+        private List<Solder> GetSoldersRank()
+        {
+            List<Solder> soldersRank = new List<Solder>();
+            soldersRank.Add(new Melee());
+            soldersRank.Add(new Range());
+            soldersRank.Add(new Tank());
+            return soldersRank;
+        }
     }
 
     class Solder
