@@ -18,38 +18,47 @@ namespace Fish_and_Chips
 
     class Aquarium
     {
-        const int MaxCount = 10;
-        private List<Fish> _fishs = new List<Fish>();
+        private const int CommandAddFish = 1;
+        private const int CommandRemoveFish = 2;
+        private const int CommandExit = 3;
+        private const int MaxCount = 10;
+        private List<Fish> _fishes = new List<Fish>();
 
         public void ShowFuctionList(out bool isWork)
         {
             isWork = true;
             Console.Clear();
-            ShowFish();
+            Live();
+            ShowFishes();
             Console.WriteLine("Выбирите команду");
-            Console.WriteLine("1. Добавить рыбу\n2. Достать рыбу\n3. Выход");
+            Console.WriteLine($"{CommandAddFish}. Добавить рыбу\n{CommandRemoveFish}. Достать рыбу\n{CommandExit}. Выход");
 
             if (int.TryParse(Console.ReadLine(), out int result))
             {
                 switch (result)
                 {
-                    case 1:
+                    case CommandAddFish:
                         AddFish();
                         break;
-                    case 2:
+                    case CommandRemoveFish:
                         RemoveFish();
                         break;
-                    case 3:
+                    case CommandExit:
                         isWork = false;
                         break;
                     default:
                         Console.WriteLine("Неверная команда - попробуйте ещё");
                         break;
+
                 }
             }
-            if (_fishs.Count > 0)
+        }
+
+        private void Live()
+        {
+            if (_fishes.Count > 0)
             {
-                foreach (var fish in _fishs)
+                foreach (var fish in _fishes)
                 {
                     fish.LiveAge();
                 }
@@ -58,28 +67,31 @@ namespace Fish_and_Chips
 
         private void AddFish()
         {
-            if (_fishs.Count - 1 <= MaxCount)
+            if (_fishes.Count < MaxCount)
             {
-                int count = 0;
-                Console.WriteLine("Выбирете рыбу, которую хотите добавить.");
-
-                foreach (var fish in AvableFish())
-                {
-                    count++;
-                    Console.WriteLine($"{count}: {fish.Name}");
-                }
-
+                int maxCountFishes = 4;
+                Console.WriteLine($"Выбирете рыбу, которую хотите добавить.");
+                Console.WriteLine($"1. Рыба клоун\n2. Щука\n3. Карп\n4. Фугу");
                 string input = Console.ReadLine();
 
-                if (int.TryParse(input, out int result) && result - 1 < AvableFish().Count && result > 0)
+                if (int.TryParse(input, out int result) && result - 1 < maxCountFishes && result > 0)
                 {
-                    _fishs.Add(AvableFish()[result - 1]);
+                    switch (result)
+                    {
+                        case 1:
+                            _fishes.Add(new Clown("Рыба Клоун", 5));
+                            break;
+                        case 2:
+                            _fishes.Add(new Pike("Щука", 15));
+                            break;
+                        case 3:
+                            _fishes.Add(new Carp("Карп", 10));
+                            break;
+                        case 4:
+                            _fishes.Add(new Fugu("Фугу", 7));
+                            break;
+                    }
                 }
-                else
-                {
-                    Console.WriteLine("Такой рыбы нету");
-                }
-
             }
             else
             {
@@ -90,25 +102,26 @@ namespace Fish_and_Chips
         private void RemoveFish()
         {
             Console.WriteLine("Выбирете рыбу которую хотите достать.");
-            ShowFish();
+            ShowFishes();
             string input = Console.ReadLine();
 
-            if (int.TryParse(input, out int result) && result <= _fishs.Count && result > 0)
+            if (int.TryParse(input, out int result) && result <= _fishes.Count && result > 0)
             {
-                Console.WriteLine($"Вы достали рыбу {_fishs[result - 1].Name}");
-                _fishs.Remove(_fishs[result - 1]);
+                Console.WriteLine($"Вы достали рыбу {_fishes[result - 1].Name}");
+                _fishes.Remove(_fishes[result - 1]);
             }
         }
 
-        private void ShowFish()
+        private void ShowFishes()
         {
             Console.WriteLine("В аквариуме");
             Console.WriteLine("-----------");
 
-            if (_fishs.Count != 0)
+            if (_fishes.Count != 0)
             {
                 int count = 0;
-                foreach (var fish in _fishs)
+
+                foreach (var fish in _fishes)
                 {
                     count++;
                     if (fish.IsAlive())
@@ -127,28 +140,19 @@ namespace Fish_and_Chips
             }
             Console.WriteLine("-----------");
         }
-
-        private List<Fish> AvableFish()
-        {
-            List<Fish> fish = new List<Fish>();
-            fish.Add(new Clown("Рыба Клоун"));
-            fish.Add(new Pike("Щука"));
-            fish.Add(new Carp("Карп"));
-            fish.Add(new Fugu("Рыба Фугу"));
-            return fish;
-        }
     }
 
     class Fish
     {
+        public Fish(string name, int maxAge)
+        {
+            Name = name;
+            MaxAge = maxAge;
+        }
+
         public string Name { get; private set; }
         public int Age { get; private set; }
         public int MaxAge { get; protected set; }
-
-        public Fish(string name)
-        {
-            Name = name;
-        }
 
         public void LiveAge()
         {
@@ -163,21 +167,21 @@ namespace Fish_and_Chips
 
     class Clown : Fish
     {
-        public Clown(string name) : base(name) { MaxAge = 5; }
+        public Clown(string name, int maxAge) : base(name, maxAge) { }
     }
 
     class Pike : Fish
     {
-        public Pike(string name) : base(name) { MaxAge = 20; }
+        public Pike(string name, int maxAge) : base(name, maxAge) { }
     }
 
     class Carp : Fish
     {
-        public Carp(string name) : base(name) { MaxAge = 15; }
+        public Carp(string name, int maxAge) : base(name, maxAge) { }
     }
 
     class Fugu : Fish
     {
-        public Fugu(string name) : base(name) { MaxAge = 10; }
+        public Fugu(string name, int maxAge) : base(name, maxAge) { }
     }
 }
