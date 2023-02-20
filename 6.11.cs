@@ -2,6 +2,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Fish_and_Chips
 {
+    enum Fishes
+    {
+        Clown = 1,
+        Pike,
+        Carp,
+        Fugu
+    }
+
     internal class Program
     {
         static void Main(string[] args)
@@ -71,23 +79,23 @@ namespace Fish_and_Chips
             {
                 int maxCountFishes = 4;
                 Console.WriteLine($"Выбирете рыбу, которую хотите добавить.");
-                Console.WriteLine($"1. Рыба клоун\n2. Щука\n3. Карп\n4. Фугу");
+                Console.WriteLine($"{(int)Fishes.Clown}. Рыба клоун\n{(int)Fishes.Pike}. Щука\n{(int)Fishes.Carp}. Карп\n{(int)Fishes.Fugu}. Фугу");
                 string input = Console.ReadLine();
 
                 if (int.TryParse(input, out int result) && result - 1 < maxCountFishes && result > 0)
                 {
                     switch (result)
                     {
-                        case 1:
+                        case ((int)Fishes.Clown):
                             _fishes.Add(new Clown("Рыба Клоун", 5));
                             break;
-                        case 2:
+                        case ((int)Fishes.Pike):
                             _fishes.Add(new Pike("Щука", 15));
                             break;
-                        case 3:
+                        case ((int)Fishes.Carp):
                             _fishes.Add(new Carp("Карп", 10));
                             break;
-                        case 4:
+                        case ((int)Fishes.Fugu):
                             _fishes.Add(new Fugu("Фугу", 7));
                             break;
                     }
@@ -124,7 +132,8 @@ namespace Fish_and_Chips
                 foreach (var fish in _fishes)
                 {
                     count++;
-                    if (fish.IsAlive())
+
+                    if (fish.IsAlive)
                     {
                         Console.WriteLine($"{count} {fish.Name}: {fish.Age} лет");
                     }
@@ -159,10 +168,7 @@ namespace Fish_and_Chips
             Age++;
         }
 
-        public bool IsAlive()
-        {
-            return Age <= MaxAge;
-        }
+        public bool IsAlive => Age <= MaxAge;
     }
 
     class Clown : Fish
