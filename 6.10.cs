@@ -21,14 +21,14 @@ namespace Ijunior
             while(_armyRed.GetSoldersCount() > 0 && _armyBlue.GetSoldersCount() > 0)
             {
                 ShowArmys();
-                Solder SolderRed = _armyRed.GetSolder();
-                Solder SolderBlue = _armyBlue.GetSolder();
-                SolderRed.TakeDamage(SolderBlue.Damage);
-                SolderRed.UseSpecial(SolderBlue);
-                SolderBlue.TakeDamage(SolderRed.Damage);
-                SolderBlue.UseSpecial(SolderRed);
-                RemoveSolder(SolderRed);
-                RemoveSolder(SolderBlue);
+                Soldier soldierRed = _armyRed.GetSoldier();
+                Soldier soldierBlue = _armyBlue.GetSoldier();
+                soldierRed.TakeDamage(soldierBlue.Damage);
+                soldierRed.UseSpecial(soldierBlue);
+                soldierBlue.TakeDamage(soldierRed.Damage);
+                soldierBlue.UseSpecial(soldierRed);
+                RemoveSoldier(soldierRed);
+                RemoveSoldier(soldierBlue);
                 Console.ReadKey();
                 Console.Clear();
             }
@@ -52,17 +52,17 @@ namespace Ijunior
             {
                 Console.WriteLine("Победила армия синих");
             }
-            if(_armyBlue.GetSoldersCount() <= 0)
+            else if(_armyBlue.GetSoldersCount() <= 0)
             {
                 Console.WriteLine("Победила армия красных");
             }
         }
 
-        private void RemoveSolder(Solder solder)
+        private void RemoveSoldier(Soldier soldier)
         {
-            if(solder.IsAlive() == false)
+            if(soldier.IsAlive() == false)
             {
-                _armyBlue.RemoveFromField(solder);
+                _armyBlue.RemoveSoldier(soldier);
             }
         }
     }
@@ -70,10 +70,9 @@ namespace Ijunior
 
     class Army
     {
-        public string Name { get; private set; }
         private const int MaxCount = 10;
         private const int MinCount = 5;
-        private List<Solder> _solders = new List<Solder>();
+        private List<Soldier> _solders = new List<Soldier>();
         private Random _random = new Random();
 
         public Army(string name)
@@ -82,26 +81,28 @@ namespace Ijunior
             CreateSolders();
         }
 
+        public string Name { get; private set; }
+
         public int GetSoldersCount()
         {
             return _solders.Count;
         }
 
-        public Solder GetSolder()
+        public Soldier GetSoldier()
         {
             return _solders[_random.Next(0,_solders.Count)];
         }
 
-        public void RemoveFromField(Solder solder)
+        public void RemoveSoldier(Soldier soldier)
         {
-            _solders.Remove(solder);
+            _solders.Remove(soldier);
         }
 
         public void ShowInfo()
         {
-            foreach (var solder in _solders)
+            foreach (var soldier in _solders)
             {
-                Console.WriteLine($"{solder.Name} - {solder.Healt}оз, {solder.Damage}ур");
+                Console.WriteLine($"{soldier.Name} - {soldier.Healt}оз, {soldier.Damage}ур");
             }
         }
 
@@ -116,9 +117,9 @@ namespace Ijunior
             }
         }
 
-        private List<Solder> GetSoldersRank()
+        private List<Soldier> GetSoldersRank()
         {
-            List<Solder> soldersRank = new List<Solder>();
+            List<Soldier> soldersRank = new List<Soldier>();
             soldersRank.Add(new Melee());
             soldersRank.Add(new Range());
             soldersRank.Add(new Tank());
@@ -126,7 +127,7 @@ namespace Ijunior
         }
     }
 
-    class Solder
+    class Soldier
     {
         public string Name { get; protected set; }
         public int Damage { get; protected set; }
@@ -143,10 +144,10 @@ namespace Ijunior
             Console.WriteLine($"{Name} нанёс {damage} урона.");
         }
 
-        public virtual void UseSpecial(Solder solder) { }
+        public virtual void UseSpecial(Soldier soldier) { }
     }
 
-    class Melee : Solder
+    class Melee : Soldier
     {
         private int _buffHeal = 10;
 
@@ -157,14 +158,14 @@ namespace Ijunior
             Healt = 50;
         }
 
-        public override void UseSpecial(Solder solder)
+        public override void UseSpecial(Soldier soldier)
         {
             Console.WriteLine($"{Name} Перебинтовался");
             Healt += _buffHeal;
         }
     }
 
-    class Range : Solder
+    class Range : Soldier
     {
         private int _buffDamage = 25;
 
@@ -175,14 +176,14 @@ namespace Ijunior
             Healt = 45;
         }
 
-        public override void UseSpecial(Solder solder)
+        public override void UseSpecial(Soldier soldier)
         {
             Console.WriteLine($"{Name} Выстрелил бронебойным патроном");
-            solder.TakeDamage(_buffDamage);
+            soldier.TakeDamage(_buffDamage);
         }
     }
 
-    class Tank : Solder
+    class Tank : Soldier
     {
         private int _buffDamage = 30;
 
@@ -193,10 +194,10 @@ namespace Ijunior
             Healt = 30;
         }
 
-        public override void UseSpecial(Solder solder)
+        public override void UseSpecial(Soldier soldier)
         {
             Console.WriteLine($"{Name} Выстрелил снарядом");
-            solder.TakeDamage(_buffDamage);
+            soldier.TakeDamage(_buffDamage);
         }
     }
 }
