@@ -18,7 +18,7 @@ namespace Ijunior
 
         public void Fight()
         {
-            while(_armyRed.GetSoldersCount() > 0 && _armyBlue.GetSoldersCount() > 0)
+            while (_armyRed.GetSoldersCount() > 0 && _armyBlue.GetSoldersCount() > 0)
             {
                 ShowArmys();
                 Soldier soldierRed = _armyRed.GetSoldier();
@@ -48,11 +48,11 @@ namespace Ijunior
 
         private void ShowResult()
         {
-            if(_armyRed.GetSoldersCount() <= 0)
+            if (_armyRed.GetSoldersCount() <= 0)
             {
                 Console.WriteLine("Победила армия синих");
             }
-            else if(_armyBlue.GetSoldersCount() <= 0)
+            else if (_armyBlue.GetSoldersCount() <= 0)
             {
                 Console.WriteLine("Победила армия красных");
             }
@@ -60,18 +60,17 @@ namespace Ijunior
 
         private void RemoveSoldier(Soldier soldier)
         {
-            if(soldier.IsAlive() == false)
+            if (soldier.IsAlive() == false)
             {
                 _armyBlue.RemoveSoldier(soldier);
             }
         }
     }
 
-
     class Army
     {
-        private const int MaxCount = 10;
-        private const int MinCount = 5;
+        const int MaxCount = 10;
+        const int MinCount = 5;
         private List<Soldier> _solders = new List<Soldier>();
         private Random _random = new Random();
 
@@ -90,7 +89,7 @@ namespace Ijunior
 
         public Soldier GetSoldier()
         {
-            return _solders[_random.Next(0,_solders.Count)];
+            return _solders[_random.Next(0, _solders.Count)];
         }
 
         public void RemoveSoldier(Soldier soldier)
