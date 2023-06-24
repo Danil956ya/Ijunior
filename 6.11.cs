@@ -1,15 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using System.Data.Common;
 
 namespace Fish_and_Chips
 {
-    enum Fishes
-    {
-        Clown = 1,
-        Pike,
-        Carp,
-        Fugu
-    }
-
     internal class Program
     {
         static void Main(string[] args)
@@ -31,6 +24,7 @@ namespace Fish_and_Chips
         private const int CommandExit = 3;
         private const int MaxCount = 10;
         private List<Fish> _fishes = new List<Fish>();
+        private List<Fish> _possibleFishes = new List<Fish>();
 
         public void ShowFuctionList(out bool isWork)
         {
@@ -41,7 +35,7 @@ namespace Fish_and_Chips
             Console.WriteLine("Выбирите команду");
             Console.WriteLine($"{CommandAddFish}. Добавить рыбу\n{CommandRemoveFish}. Достать рыбу\n{CommandExit}. Выход");
 
-            if (int.TryParse(Console.ReadLine(), out int result))
+            if (GetNumber(out int result))
             {
                 switch (result)
                 {
@@ -74,31 +68,21 @@ namespace Fish_and_Chips
         }
 
         private void AddFish()
-        {
+        { 
             if (_fishes.Count < MaxCount)
             {
                 int maxCountFishes = 4;
+                int fishCount = 0;
                 Console.WriteLine($"Выбирете рыбу, которую хотите добавить.");
-                Console.WriteLine($"{(int)Fishes.Clown}. Рыба клоун\n{(int)Fishes.Pike}. Щука\n{(int)Fishes.Carp}. Карп\n{(int)Fishes.Fugu}. Фугу");
-                string input = Console.ReadLine();
 
-                if (int.TryParse(input, out int result) && result - 1 < maxCountFishes && result > 0)
+                foreach(var fish in PossibleFishes())
                 {
-                    switch (result)
-                    {
-                        case ((int)Fishes.Clown):
-                            _fishes.Add(new Clown("Рыба Клоун", 5));
-                            break;
-                        case ((int)Fishes.Pike):
-                            _fishes.Add(new Pike("Щука", 15));
-                            break;
-                        case ((int)Fishes.Carp):
-                            _fishes.Add(new Carp("Карп", 10));
-                            break;
-                        case ((int)Fishes.Fugu):
-                            _fishes.Add(new Fugu("Фугу", 7));
-                            break;
-                    }
+                    Console.WriteLine(++fishCount + " " + fish.Name);
+                }
+
+                if (GetNumber(out int result, maxCountFishes))
+                {
+                    _fishes.Add(PossibleFishes()[result - 1]);
                 }
             }
             else
@@ -111,9 +95,8 @@ namespace Fish_and_Chips
         {
             Console.WriteLine("Выбирете рыбу которую хотите достать.");
             ShowFishes();
-            string input = Console.ReadLine();
 
-            if (int.TryParse(input, out int result) && result <= _fishes.Count && result > 0)
+            if (GetNumber(out int result) && result <= _fishes.Count && result > 0)
             {
                 Console.WriteLine($"Вы достали рыбу {_fishes[result - 1].Name}");
                 _fishes.Remove(_fishes[result - 1]);
@@ -148,6 +131,44 @@ namespace Fish_and_Chips
                 Console.WriteLine("Аквариум пуст.");
             }
             Console.WriteLine("-----------");
+        }
+
+        private bool GetNumber(out int number, int maxFishes)
+        {
+            if (int.TryParse(Console.ReadLine(), out int result) && result - 1 < maxFishes && result > 0)
+            {
+                number = result;
+                return true;
+            }
+            else
+            {
+                number = 0;
+                return false;
+            }
+        }
+
+        private bool GetNumber(out int number)
+        {
+            if (int.TryParse(Console.ReadLine(), out int result))
+            {
+                number = result;
+                return true;
+            }
+            else
+            {
+                number = 0;
+                return false;
+            }
+        }
+
+        private List<Fish> PossibleFishes()
+        {
+            List<Fish> fishs = new List<Fish>();
+            fishs.Add(new Clown("Clown",5));
+            fishs.Add(new Pike("Pike", 10));
+            fishs.Add(new Carp("Carp", 7));
+            fishs.Add(new Fugu("Fugu", 8));
+            return fishs;
         }
     }
 
