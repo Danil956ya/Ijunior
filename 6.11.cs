@@ -8,17 +8,13 @@ namespace Fish_and_Chips
         static void Main(string[] args)
         {
             Aquarium aquarium = new Aquarium();
-            bool isWork = true;
-
-            while (isWork)
-            {
-                aquarium.ShowFuctionList(out isWork);
-            }
+            aquarium.ShowFuctionList();
         }
     }
 
     class Aquarium
     {
+        private bool isWork = true;
         private const int CommandAddFish = 1;
         private const int CommandRemoveFish = 2;
         private const int CommandExit = 3;
@@ -26,32 +22,34 @@ namespace Fish_and_Chips
         private List<Fish> _fishes = new List<Fish>();
         private List<Fish> _possibleFishes = new List<Fish>();
 
-        public void ShowFuctionList(out bool isWork)
+        public void ShowFuctionList()
         {
-            isWork = true;
-            Console.Clear();
-            Live();
-            ShowFishes();
-            Console.WriteLine("Выбирите команду");
-            Console.WriteLine($"{CommandAddFish}. Добавить рыбу\n{CommandRemoveFish}. Достать рыбу\n{CommandExit}. Выход");
-
-            if (GetNumber(out int result))
+            while (isWork)
             {
-                switch (result)
-                {
-                    case CommandAddFish:
-                        AddFish();
-                        break;
-                    case CommandRemoveFish:
-                        RemoveFish();
-                        break;
-                    case CommandExit:
-                        isWork = false;
-                        break;
-                    default:
-                        Console.WriteLine("Неверная команда - попробуйте ещё");
-                        break;
+                Console.Clear();
+                Live();
+                ShowFishes();
+                Console.WriteLine("Выбирите команду");
+                Console.WriteLine($"{CommandAddFish}. Добавить рыбу\n{CommandRemoveFish}. Достать рыбу\n{CommandExit}. Выход");
 
+                if (int.TryParse(Console.ReadLine(), out int result))
+                {
+                    switch (result)
+                    {
+                        case CommandAddFish:
+                            AddFish();
+                            break;
+                        case CommandRemoveFish:
+                            RemoveFish();
+                            break;
+                        case CommandExit:
+                            isWork = false;
+                            break;
+                        default:
+                            Console.WriteLine("Неверная команда - попробуйте ещё");
+                            break;
+
+                    }
                 }
             }
         }
@@ -68,21 +66,15 @@ namespace Fish_and_Chips
         }
 
         private void AddFish()
-        { 
+        {
             if (_fishes.Count < MaxCount)
             {
-                int maxCountFishes = 4;
-                int fishCount = 0;
                 Console.WriteLine($"Выбирете рыбу, которую хотите добавить.");
+                ShowPossibleFishs();
 
-                foreach(var fish in PossibleFishes())
+                if (TryAddFish(out Fish fish))
                 {
-                    Console.WriteLine(++fishCount + " " + fish.Name);
-                }
-
-                if (GetNumber(out int result, maxCountFishes))
-                {
-                    _fishes.Add(PossibleFishes()[result - 1]);
+                    _fishes.Add(fish);
                 }
             }
             else
@@ -93,13 +85,16 @@ namespace Fish_and_Chips
 
         private void RemoveFish()
         {
-            Console.WriteLine("Выбирете рыбу которую хотите достать.");
-            ShowFishes();
-
-            if (GetNumber(out int result) && result <= _fishes.Count && result > 0)
+            if (_fishes.Count != 0)
             {
-                Console.WriteLine($"Вы достали рыбу {_fishes[result - 1].Name}");
-                _fishes.Remove(_fishes[result - 1]);
+                Console.WriteLine("Выбирете рыбу которую хотите достать.");
+                ShowFishes();
+
+                if (TryRemoveFish(out Fish fish))
+                {
+                    Console.WriteLine($"Вы достали рыбу {fish.Name}");
+                    _fishes.Remove(fish);
+                }
             }
         }
 
@@ -133,38 +128,44 @@ namespace Fish_and_Chips
             Console.WriteLine("-----------");
         }
 
-        private bool GetNumber(out int number, int maxFishes)
+        private void ShowPossibleFishs()
         {
-            if (int.TryParse(Console.ReadLine(), out int result) && result - 1 < maxFishes && result > 0)
+            int fishCount = 0;
+            foreach (var fish in GetPossibleFishes())
             {
-                number = result;
-                return true;
-            }
-            else
-            {
-                number = 0;
-                return false;
+                Console.WriteLine(++fishCount + " " + fish.Name);
             }
         }
 
-        private bool GetNumber(out int number)
+        private bool TryAddFish(out Fish? fish)
         {
-            if (int.TryParse(Console.ReadLine(), out int result))
+            if (int.TryParse(Console.ReadLine(), out int result) && result <= GetPossibleFishes().Count)
             {
-                number = result;
+                fish = GetPossibleFishes()[result - 1];
                 return true;
             }
-            else
-            {
-                number = 0;
-                return false;
-            }
+            fish = null;
+            return false;
         }
 
-        private List<Fish> PossibleFishes()
+        private bool TryRemoveFish(out Fish fish)
+        {
+            if (_fishes.Count != 0)
+            {
+                if (int.TryParse(Console.ReadLine(), out int result) && result <= _fishes.Count)
+                {
+                    fish = _fishes[result - 1];
+                    return true;
+                }
+            }
+            fish = null;
+            return false;
+        }
+
+        private List<Fish> GetPossibleFishes()
         {
             List<Fish> fishs = new List<Fish>();
-            fishs.Add(new Clown("Clown",5));
+            fishs.Add(new Clown("Clown", 5));
             fishs.Add(new Pike("Pike", 10));
             fishs.Add(new Carp("Carp", 7));
             fishs.Add(new Fugu("Fugu", 8));
