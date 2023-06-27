@@ -10,7 +10,7 @@ namespace Zoo_In_Gloo
     }
 
     public static class Number
-    { 
+    {
         private static Random _random = new Random();
 
         public static int GetRandom(int count)
@@ -23,13 +23,11 @@ namespace Zoo_In_Gloo
     public class Zoo
     {
         private List<Aviary> _aviaries = new List<Aviary>();
-        private const int CommandChoice = 1;
-        private const int CommandExit = 2;
-        private const int MaxArivary = 6;
-        private bool isWork = true;
 
         public Zoo()
         {
+            int MaxArivary = 6;
+
             for (int i = 0; i < MaxArivary; i++)
             {
                 _aviaries.Add(new Aviary());
@@ -38,6 +36,10 @@ namespace Zoo_In_Gloo
 
         public void Work()
         {
+            bool isWork = true;
+            const int CommandChoice = 1;
+            const int CommandExit = 2;
+
             while (isWork)
             {
                 Console.WriteLine($"{CommandChoice}. - Подойти к вальеру\n{CommandExit}. - выход");
@@ -63,12 +65,12 @@ namespace Zoo_In_Gloo
         {
             Console.WriteLine("Укажите номер вальера");
 
-            for (int i = 0; i < MaxArivary; i++)
+            for (int i = 0; i < _aviaries.Count; i++)
             {
                 Console.WriteLine($"{i + 1} Вальер.");
             }
 
-            if (int.TryParse(Console.ReadLine(), out int result) && result <= _aviaries.Count && result > 0);
+            if (int.TryParse(Console.ReadLine(), out int result) && result <= _aviaries.Count && result > 0) ;
             {
                 _aviaries[result - 1].ShowInfo();
             }
@@ -79,11 +81,14 @@ namespace Zoo_In_Gloo
     public class Aviary
     {
         private List<Animal> _animals = new List<Animal>();
-        private List<Animal> _avableAnimals = new List<Animal>() { new Lion("Лев", "Rrrrr"), new Turttle("Черепаха", "Qva") , new Giraffe("Жираф", "GeGeGe"), new Tiger("Тигр", "Rrrrrr"), new Monkey("Обезьяна", "YyYyYy"), new Hippopotamus("Бегемот", "UAAAA"), new Crocodile("Крокодил", "AaUuWw") };
-        private const int MaxAnimalCount = 10;
+        private List<Animal> _avableAnimals = new List<Animal>();
 
         public Aviary()
         {
+            int MaxAnimalCount = 10;
+
+            FillAnimalList();
+
             for (int i = 0; i < Number.GetRandom(MaxAnimalCount); i++)
             {
                 _animals.Add(GetRandomAnimal());
@@ -111,37 +116,47 @@ namespace Zoo_In_Gloo
         {
             return _avableAnimals[Number.GetRandom(_avableAnimals.Count)].Clone();
         }
+
+        private void FillAnimalList()
+        {
+            _avableAnimals.Add(new Lion());
+            _avableAnimals.Add(new Turttle());
+            _avableAnimals.Add(new Giraffe());
+            _avableAnimals.Add(new Tiger());
+            _avableAnimals.Add(new Monkey());
+        }
     }
 
     public abstract class Animal
     {
-        public Animal(string animalName, string voice)
+        private const int MaxRandomChance = 4;
+        private const int MinRandomChance = 2;
+
+        public Animal(string type, string voice)
         {
-            IsMale = GetAnimalSex();
+            IsMale = GetSex();
             Name = GetRandomName();
-            Sex = IsMale? "Самец" : "Самка";
-            AnimalName = animalName;
+            Sex = IsMale ? "Самец" : "Самка";
+            Type = type;
             Voice = voice;
         }
 
-        public abstract Animal Clone();
-        public string AnimalName { get; protected set; }
+        public string Type { get; protected set; }
         public string Sex { get; protected set; }
         public string Name { get; protected set; }
         public string Voice { get; protected set; }
         public bool IsMale { get; protected set; }
 
-        private const int MaxChance = 4;
-        private const int MinChance = 2;
+        public abstract Animal Clone();
 
         public void ShowStats()
         {
-            Console.WriteLine($"{Sex}: {AnimalName} {Name} \nИздаёт звук: {Voice}\n");
+            Console.WriteLine($"{Sex}: {Type} {Name} \nИздаёт звук: {Voice}\n");
         }
 
-        private bool GetAnimalSex()
+        private bool GetSex()
         {
-            return Number.GetRandom(MaxChance) >= MinChance;
+            return Number.GetRandom(MaxRandomChance) >= MinRandomChance;
         }
 
         private string GetRandomName()
@@ -158,77 +173,57 @@ namespace Zoo_In_Gloo
 
     public class Lion : Animal
     {
-        public Lion(string animalName, string voice) : base(animalName, voice) 
+        public Lion() : base("Лев", "Rrrrr")
         {
-            AnimalName = IsMale ? "Lev" : "Lviza";
+            Type = IsMale ? "Лев" : "Львица";
         }
 
         public override Animal Clone()
         {
-            return new Lion(AnimalName, Voice);
+            return new Lion();
         }
     }
 
     public class Turttle : Animal
     {
-        public Turttle(string animalName, string voice) : base(animalName, voice) { }
+        public Turttle() : base("Черепаха", "Qva") { }
 
         public override Animal Clone()
         {
-            return new Turttle(AnimalName, Voice);
+            return new Turttle();
         }
     }
 
     public class Giraffe : Animal
     {
-        public Giraffe(string animalName, string voice) : base(animalName, voice) { }
+        public Giraffe() : base("Жираф", "DAdaDada") { }
 
         public override Animal Clone()
         {
-            return new Giraffe(AnimalName, Voice);
+            return new Giraffe();
         }
     }
 
     public class Tiger : Animal
     {
-        public Tiger(string animalName, string voice) : base(animalName, voice)
+        public Tiger() : base("Тигр", "meyw")
         {
-            AnimalName = IsMale ? "Тигр" : "Тигрица";
+            Type = IsMale ? "Тигр" : "Тигрица";
         }
 
         public override Animal Clone()
         {
-            return new Tiger(AnimalName, Voice);
+            return new Tiger();
         }
     }
 
     public class Monkey : Animal
     {
-        public Monkey(string animalName, string voice) : base(animalName, voice) { }
+        public Monkey() : base("Обезьяна", "YYYyyyYYY") { }
 
         public override Animal Clone()
         {
-            return new Monkey(AnimalName, Voice);
-        }
-    }
-
-    public class Crocodile : Animal
-    {
-        public Crocodile(string animalName, string voice) : base(animalName, voice) { }
-
-        public override Animal Clone()
-        {
-            return new Crocodile(AnimalName, Voice);
-        }
-    }
-
-    public class Hippopotamus : Animal
-    {
-        public Hippopotamus(string animalName, string voice) : base(animalName, voice) { }
-
-        public override Animal Clone()
-        {
-            return new Hippopotamus(AnimalName,Voice);
+            return new Monkey();
         }
     }
 }
