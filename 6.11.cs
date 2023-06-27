@@ -55,7 +55,6 @@ namespace Fish_and_Chips
                         default:
                             Console.WriteLine("Неверная команда - попробуйте ещё");
                             break;
-
                     }
                 }
             }
@@ -205,7 +204,6 @@ namespace Fish_and_Chips
         {
             return new Pike(Name, MaxAge);
         }
-
     }
 
     class Carp : Fish
