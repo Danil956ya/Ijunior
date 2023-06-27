@@ -1,47 +1,54 @@
-using System.ComponentModel.DataAnnotations;
-using System.Data.Common;
-using System.Net;
-
-namespace Fish_and_Chips
+namespace Zoo_In_Gloo
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Aquarium aquarium = new Aquarium();
-            aquarium.Work();
+            Zoo zoo = new Zoo();
+            zoo.Work();
         }
     }
 
-    class Aquarium
+    public static class Number
     {
-        private bool isWork = true;
-        private const int CommandAddFish = 1;
-        private const int CommandRemoveFish = 2;
-        private const int CommandExit = 3;
-        private const int MaxCount = 10;
-        private List<Fish> _fishes = new List<Fish>();
-        private List<Fish> _possibleFishes = new List<Fish>() { new Clown("Clown", 4), new Pike("Pike", 5), new Carp("Carp", 7), new Fugu("Fugu", 8) };
+        private static Random _random = new Random();
+
+        public static int GetRandom(int count)
+        {
+            return _random.Next(count);
+        }
+    }
+
+
+    public class Zoo
+    {
+        private List<Aviary> _aviaries = new List<Aviary>();
+
+        public Zoo()
+        {
+            int MaxArivary = 6;
+
+            for (int i = 0; i < MaxArivary; i++)
+            {
+                _aviaries.Add(new Aviary());
+            }
+        }
 
         public void Work()
         {
+            bool isWork = true;
+            const int CommandChoice = 1;
+            const int CommandExit = 2;
+
             while (isWork)
             {
-                Console.Clear();
-                Live();
-                ShowFishes();
-                Console.WriteLine("Выбирите команду");
-                Console.WriteLine($"{CommandAddFish}. Добавить рыбу\n{CommandRemoveFish}. Достать рыбу\n{CommandExit}. Выход");
-
+                Console.WriteLine($"{CommandChoice}. - Подойти к вальеру\n{CommandExit}. - выход");
                 if (int.TryParse(Console.ReadLine(), out int result))
                 {
                     switch (result)
                     {
-                        case CommandAddFish:
-                            AddFish();
-                            break;
-                        case CommandRemoveFish:
-                            RemoveFish();
+                        case CommandChoice:
+                            ChoiceAviary();
                             break;
                         case CommandExit:
                             isWork = false;
@@ -54,161 +61,169 @@ namespace Fish_and_Chips
             }
         }
 
-        private void Live()
+        private void ChoiceAviary()
         {
-            foreach (var fish in _fishes)
+            Console.WriteLine("Укажите номер вальера");
+
+            for (int i = 0; i < _aviaries.Count; i++)
             {
-                fish.GrowOld();
+                Console.WriteLine($"{i + 1} Вальер.");
+            }
+
+            if (int.TryParse(Console.ReadLine(), out int result) && result <= _aviaries.Count && result > 0) ;
+            {
+                _aviaries[result - 1].ShowInfo();
+            }
+        }
+    }
+
+
+    public class Aviary
+    {
+        private List<Animal> _animals = new List<Animal>();
+        private List<Animal> _avableAnimals = new List<Animal>();
+
+        public Aviary()
+        {
+            int MaxAnimalCount = 10;
+
+            FillAnimalList();
+
+            for (int i = 0; i < Number.GetRandom(MaxAnimalCount); i++)
+            {
+                _animals.Add(GetRandomAnimal());
             }
         }
 
-        private void AddFish()
+        public void ShowInfo()
         {
-            if (_fishes.Count < MaxCount)
+            Console.Clear();
+            if (_animals.Count > 0)
             {
-                Console.WriteLine($"Выбирете рыбу, которую хотите добавить.");
-                ShowPossibleFishs();
-
-                if (TryPeekFish(out Fish fish, _possibleFishes))
+                Console.WriteLine($"В вальере - {_animals.Count} животных");
+                foreach (var animal in _animals)
                 {
-                    _fishes.Add(fish);
+                    animal.ShowStats();
                 }
             }
             else
             {
-                Console.WriteLine("В аквариуме слишком много рыб");
+                Console.WriteLine("Вальер пуст");
             }
         }
 
-        private void RemoveFish()
+        private Animal GetRandomAnimal()
         {
-            if (_fishes.Count != 0)
-            {
-                Console.WriteLine("Выбирете рыбу которую хотите достать.");
-                ShowFishes();
-
-                if (TryPeekFish(out Fish fish, _fishes))
-                {
-                    Console.WriteLine($"Вы достали рыбу {fish.Name}");
-                    _fishes.Remove(fish);
-                }
-            }
+            return _avableAnimals[Number.GetRandom(_avableAnimals.Count)].Clone();
         }
 
-        private void ShowFishes()
+        private void FillAnimalList()
         {
-            Console.WriteLine("В аквариуме");
-            Console.WriteLine("-----------");
-
-            if (_fishes.Count != 0)
-            {
-                int count = 0;
-
-                foreach (var fish in _fishes)
-                {
-                    Console.WriteLine($"{++count}. {fish.ShowStat()}");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Аквариум пуст.");
-            }
-            Console.WriteLine("-----------");
-        }
-
-        private void ShowPossibleFishs()
-        {
-            int fishCount = 0;
-            foreach (var fish in _possibleFishes)
-            {
-                Console.WriteLine($"{++fishCount} {fish.Name}");
-            }
-        }
-
-        private bool TryPeekFish(out Fish fish, List<Fish> fishes)
-        {
-            if (int.TryParse(Console.ReadLine(), out int result) && result <= fishes.Count && result > 0)
-            {
-                if (fishes == _possibleFishes)
-                {
-                    fish = fishes[result - 1].Clone();
-                    return true;
-                }
-                else
-                {
-                    fish = fishes[result - 1];
-                    return true;
-                }
-            }
-            fish = null;
-            return fish != null;
+            _avableAnimals.Add(new Lion());
+            _avableAnimals.Add(new Turttle());
+            _avableAnimals.Add(new Giraffe());
+            _avableAnimals.Add(new Tiger());
+            _avableAnimals.Add(new Monkey());
         }
     }
 
-    abstract class Fish
+    public abstract class Animal
     {
-        public Fish(string name, int maxAge)
+        private const int MaxRandomChance = 4;
+        private const int MinRandomChance = 2;
+
+        public Animal(string type, string voice)
         {
-            Name = name;
-            MaxAge = maxAge;
+            IsMale = GetSex();
+            Name = GetRandomName();
+            Sex = IsMale ? "Самец" : "Самка";
+            Type = type;
+            Voice = voice;
         }
 
-        public abstract Fish Clone();
+        public string Type { get; protected set; }
+        public string Sex { get; protected set; }
+        public string Name { get; protected set; }
+        public string Voice { get; protected set; }
+        public bool IsMale { get; protected set; }
 
-        public string Name { get; private set; }
-        public int Age { get; private set; }
-        public int MaxAge { get; protected set; }
-        public bool IsAlive => Age <= MaxAge;
+        public abstract Animal Clone();
 
-        public void GrowOld()
+        public void ShowStats()
         {
-            Age++;
+            Console.WriteLine($"{Sex}: {Type} {Name} \nИздаёт звук: {Voice}\n");
         }
 
-        public string ShowStat()
+        private bool GetSex()
         {
-            string status = IsAlive ? $"{Age} Лет" : "Мертва";
-            return $"{Name} : {status}";
+            return Number.GetRandom(MaxRandomChance) >= MinRandomChance;
+        }
+
+        private string GetRandomName()
+        {
+            int index;
+            string[] MalesNames = { "Danya", "Dima", "Vova", "Victor", "Melman", "Jenya", "Igor" };
+            string[] FemalesNames = { "Alena", "Vika", "Katya", "Natasha", "Irina", "Elena", "Lisa" };
+            string[] names;
+            names = IsMale ? MalesNames : FemalesNames;
+            index = Number.GetRandom(names.Length);
+            return names[index];
         }
     }
 
-    class Clown : Fish
+    public class Lion : Animal
     {
-        public Clown(string name, int maxAge) : base(name, maxAge) { }
-
-        public override Fish Clone()
+        public Lion() : base("Лев", "Rrrrr")
         {
-            return new Clown(Name, MaxAge);
+            Type = IsMale ? "Лев" : "Львица";
+        }
+
+        public override Animal Clone()
+        {
+            return new Lion();
         }
     }
 
-    class Pike : Fish
+    public class Turttle : Animal
     {
-        public Pike(string name, int maxAge) : base(name, maxAge) { }
+        public Turttle() : base("Черепаха", "Qva") { }
 
-        public override Fish Clone()
+        public override Animal Clone()
         {
-            return new Pike(Name, MaxAge);
+            return new Turttle();
         }
     }
 
-    class Carp : Fish
+    public class Giraffe : Animal
     {
-        public Carp(string name, int maxAge) : base(name, maxAge) { }
+        public Giraffe() : base("Жираф", "DAdaDada") { }
 
-        public override Fish Clone()
+        public override Animal Clone()
         {
-            return new Carp(Name, MaxAge);
+            return new Giraffe();
         }
     }
 
-    class Fugu : Fish
+    public class Tiger : Animal
     {
-        public Fugu(string name, int maxAge) : base(name, maxAge) { }
-
-        public override Fish Clone()
+        public Tiger() : base("Тигр", "meyw")
         {
-            return new Fugu(Name, MaxAge);
+            Type = IsMale ? "Тигр" : "Тигрица";
+        }
+
+        public override Animal Clone()
+        {
+            return new Tiger();
+        }
+    }
+
+    public class Monkey : Animal
+    {
+        public Monkey() : base("Обезьяна", "YYYyyyYYY") { }
+
+        public override Animal Clone()
+        {
+            return new Monkey();
         }
     }
 }
