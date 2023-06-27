@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
+using System.Net;
 
 namespace Fish_and_Chips
 {
@@ -8,7 +9,7 @@ namespace Fish_and_Chips
         static void Main(string[] args)
         {
             Aquarium aquarium = new Aquarium();
-            aquarium.ShowFuctionList();
+            aquarium.Work();
         }
     }
 
@@ -20,9 +21,9 @@ namespace Fish_and_Chips
         private const int CommandExit = 3;
         private const int MaxCount = 10;
         private List<Fish> _fishes = new List<Fish>();
-        private List<Fish> _possibleFishes = new List<Fish>();
+        private List<Fish> _possibleFishes = new List<Fish>() { new Clown("Clown", 4), new Pike("Pike", 5), new Carp("Carp", 7), new Fugu("Fugu", 8) };
 
-        public void ShowFuctionList()
+        public void Work()
         {
             while (isWork)
             {
@@ -48,7 +49,6 @@ namespace Fish_and_Chips
                         default:
                             Console.WriteLine("Неверная команда - попробуйте ещё");
                             break;
-
                     }
                 }
             }
@@ -56,12 +56,9 @@ namespace Fish_and_Chips
 
         private void Live()
         {
-            if (_fishes.Count > 0)
+            foreach (var fish in _fishes)
             {
-                foreach (var fish in _fishes)
-                {
-                    fish.LiveAge();
-                }
+                fish.GrowOld();
             }
         }
 
@@ -72,7 +69,7 @@ namespace Fish_and_Chips
                 Console.WriteLine($"Выбирете рыбу, которую хотите добавить.");
                 ShowPossibleFishs();
 
-                if (TryAddFish(out Fish fish))
+                if (TryPeekFish(out Fish fish, _possibleFishes))
                 {
                     _fishes.Add(fish);
                 }
@@ -90,7 +87,7 @@ namespace Fish_and_Chips
                 Console.WriteLine("Выбирете рыбу которую хотите достать.");
                 ShowFishes();
 
-                if (TryRemoveFish(out Fish fish))
+                if (TryPeekFish(out Fish fish, _fishes))
                 {
                     Console.WriteLine($"Вы достали рыбу {fish.Name}");
                     _fishes.Remove(fish);
@@ -109,16 +106,7 @@ namespace Fish_and_Chips
 
                 foreach (var fish in _fishes)
                 {
-                    count++;
-
-                    if (fish.IsAlive)
-                    {
-                        Console.WriteLine($"{count} {fish.Name}: {fish.Age} лет");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"{count} {fish.Name}: мертва.");
-                    }
+                    Console.WriteLine($"{++count}. {fish.ShowStat()}");
                 }
             }
             else
@@ -131,49 +119,33 @@ namespace Fish_and_Chips
         private void ShowPossibleFishs()
         {
             int fishCount = 0;
-            foreach (var fish in GetPossibleFishes())
+            foreach (var fish in _possibleFishes)
             {
-                Console.WriteLine(++fishCount + " " + fish.Name);
+                Console.WriteLine($"{++fishCount} {fish.Name}");
             }
         }
 
-        private bool TryAddFish(out Fish? fish)
+        private bool TryPeekFish(out Fish fish, List<Fish> fishes)
         {
-            if (int.TryParse(Console.ReadLine(), out int result) && result <= GetPossibleFishes().Count)
+            if (int.TryParse(Console.ReadLine(), out int result) && result <= fishes.Count && result > 0)
             {
-                fish = GetPossibleFishes()[result - 1];
-                return true;
-            }
-            fish = null;
-            return false;
-        }
-
-        private bool TryRemoveFish(out Fish fish)
-        {
-            if (_fishes.Count != 0)
-            {
-                if (int.TryParse(Console.ReadLine(), out int result) && result <= _fishes.Count)
+                if (fishes == _possibleFishes)
                 {
-                    fish = _fishes[result - 1];
+                    fish = fishes[result - 1].Clone();
+                    return true;
+                }
+                else
+                {
+                    fish = fishes[result - 1];
                     return true;
                 }
             }
             fish = null;
-            return false;
-        }
-
-        private List<Fish> GetPossibleFishes()
-        {
-            List<Fish> fishs = new List<Fish>();
-            fishs.Add(new Clown("Clown", 5));
-            fishs.Add(new Pike("Pike", 10));
-            fishs.Add(new Carp("Carp", 7));
-            fishs.Add(new Fugu("Fugu", 8));
-            return fishs;
+            return fish != null;
         }
     }
 
-    class Fish
+    abstract class Fish
     {
         public Fish(string name, int maxAge)
         {
@@ -181,35 +153,62 @@ namespace Fish_and_Chips
             MaxAge = maxAge;
         }
 
+        public abstract Fish Clone();
+
         public string Name { get; private set; }
         public int Age { get; private set; }
         public int MaxAge { get; protected set; }
+        public bool IsAlive => Age <= MaxAge;
 
-        public void LiveAge()
+        public void GrowOld()
         {
             Age++;
         }
 
-        public bool IsAlive => Age <= MaxAge;
+        public string ShowStat()
+        {
+            string status = IsAlive ? $"{Age} Лет" : "Мертва";
+            return $"{Name} : {status}";
+        }
     }
 
     class Clown : Fish
     {
         public Clown(string name, int maxAge) : base(name, maxAge) { }
+
+        public override Fish Clone()
+        {
+            return new Clown(Name, MaxAge);
+        }
     }
 
     class Pike : Fish
     {
         public Pike(string name, int maxAge) : base(name, maxAge) { }
+
+        public override Fish Clone()
+        {
+            return new Pike(Name, MaxAge);
+        }
     }
 
     class Carp : Fish
     {
         public Carp(string name, int maxAge) : base(name, maxAge) { }
+
+        public override Fish Clone()
+        {
+            return new Carp(Name, MaxAge);
+        }
     }
 
     class Fugu : Fish
     {
         public Fugu(string name, int maxAge) : base(name, maxAge) { }
+
+        public override Fish Clone()
+        {
+            return new Fugu(Name, MaxAge);
+        }
     }
 }
