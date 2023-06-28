@@ -15,7 +15,7 @@ namespace Fish_and_Chips
 
     class Aquarium
     {
-        const int MaxFishCount = 10;
+        private const int MaxFishCount = 10;
         private List<Fish> _fishes = new List<Fish>();
         private List<Fish> _possibleFishes = new List<Fish>();
 
@@ -75,7 +75,7 @@ namespace Fish_and_Chips
                 Console.WriteLine($"Выбирете рыбу, которую хотите добавить.");
                 ShowPossibleFishs();
 
-                if (TryPeekFish(out Fish fish, _possibleFishes))
+                if (TryPeekFish(out Fish? fish, _possibleFishes))
                 {
                     _fishes.Add(fish);
                 }
@@ -93,7 +93,7 @@ namespace Fish_and_Chips
                 Console.WriteLine("Выбирете рыбу которую хотите достать.");
                 ShowFishes();
 
-                if (TryPeekFish(out Fish fish, _fishes))
+                if (TryPeekFish(out Fish? fish, _fishes))
                 {
                     Console.WriteLine($"Вы достали рыбу {fish.Name}");
                     _fishes.Remove(fish);
@@ -139,22 +139,24 @@ namespace Fish_and_Chips
             }
         }
 
-        private bool TryPeekFish(out Fish fish, List<Fish> fishes)
+        private bool TryPeekFish(out Fish? fish, List<Fish> fishes)
         {
             if (int.TryParse(Console.ReadLine(), out int result) && result <= fishes.Count && result > 0)
             {
                 if (fishes == _possibleFishes)
                 {
                     fish = fishes[result - 1].Clone();
-                    return true;
                 }
                 else
                 {
                     fish = fishes[result - 1];
-                    return true;
                 }
             }
-            fish = null;
+            else
+            {
+                fish = null;
+            }
+            
             return fish != null;
         }
     }
@@ -166,13 +168,13 @@ namespace Fish_and_Chips
             Name = name;
             MaxAge = maxAge;
         }
-
-        public abstract Fish Clone();
-
+        
         public string Name { get; private set; }
         public int Age { get; private set; }
         public int MaxAge { get; protected set; }
         public bool IsAlive => Age <= MaxAge;
+        
+        public abstract Fish Clone();
 
         public void GrowOld()
         {
@@ -192,7 +194,7 @@ namespace Fish_and_Chips
 
         public override Fish Clone()
         {
-            return new Clown(Name, MaxAge);
+            return new Clown();
         }
     }
 
@@ -202,8 +204,9 @@ namespace Fish_and_Chips
 
         public override Fish Clone()
         {
-            return new Pike(Name, MaxAge);
+            return new Pike();
         }
+
     }
 
     class Carp : Fish
@@ -212,7 +215,7 @@ namespace Fish_and_Chips
 
         public override Fish Clone()
         {
-            return new Carp(Name, MaxAge);
+            return new Carp();
         }
     }
 
@@ -222,7 +225,7 @@ namespace Fish_and_Chips
 
         public override Fish Clone()
         {
-            return new Fugu(Name, MaxAge);
+            return new Fugu();
         }
     }
 }
