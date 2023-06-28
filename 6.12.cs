@@ -2,18 +2,18 @@ namespace Zoo_In_Gloo
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Zoo zoo = new Zoo();
             zoo.Work();
         }
     }
 
-    public static class Number
+    public static class UserUtility
     {
         private static Random _random = new Random();
 
-        public static int GetRandom(int count)
+        public static int GetRandomNumber(int count)
         {
             return _random.Next(count);
         }
@@ -26,9 +26,9 @@ namespace Zoo_In_Gloo
 
         public Zoo()
         {
-            int MaxArivary = 6;
+            int maxArivary = 6;
 
-            for (int i = 0; i < MaxArivary; i++)
+            for (int i = 0; i < maxArivary; i++)
             {
                 _aviaries.Add(new Aviary());
             }
@@ -43,6 +43,7 @@ namespace Zoo_In_Gloo
             while (isWork)
             {
                 Console.WriteLine($"{CommandChoice}. - Подойти к вальеру\n{CommandExit}. - выход");
+
                 if (int.TryParse(Console.ReadLine(), out int result))
                 {
                     switch (result)
@@ -70,7 +71,7 @@ namespace Zoo_In_Gloo
                 Console.WriteLine($"{i + 1} Вальер.");
             }
 
-            if (int.TryParse(Console.ReadLine(), out int result) && result <= _aviaries.Count && result > 0) ;
+            if (int.TryParse(Console.ReadLine(), out int result) && result <= _aviaries.Count && result > 0)
             {
                 _aviaries[result - 1].ShowInfo();
             }
@@ -85,19 +86,21 @@ namespace Zoo_In_Gloo
 
         public Aviary()
         {
-            int MaxAnimalCount = 10;
-
             FillAnimalList();
+            int maxAnimalCount = 10;
+            int animalsOnAvivary = UserUtility.GetRandomNumber(maxAnimalCount);
+            Animal type = _avableAnimals[UserUtility.GetRandomNumber(_avableAnimals.Count)];
 
-            for (int i = 0; i < Number.GetRandom(MaxAnimalCount); i++)
+            for (int i = 0; i < animalsOnAvivary; i++)
             {
-                _animals.Add(GetRandomAnimal());
+                _animals.Add(GetRandomAnimalOfType(type));
             }
         }
 
         public void ShowInfo()
         {
             Console.Clear();
+
             if (_animals.Count > 0)
             {
                 Console.WriteLine($"В вальере - {_animals.Count} животных");
@@ -112,9 +115,19 @@ namespace Zoo_In_Gloo
             }
         }
 
-        private Animal GetRandomAnimal()
+        private Animal GetRandomAnimalOfType(Animal type)
         {
-            return _avableAnimals[Number.GetRandom(_avableAnimals.Count)].Clone();
+            bool isPeek = false;
+
+            foreach (var animal in _avableAnimals)
+            {
+                if(animal.Type == type.Type)
+                {
+                    isPeek = true;
+                }
+            }
+
+            return isPeek? type.Clone() : null;
         }
 
         private void FillAnimalList()
@@ -129,13 +142,10 @@ namespace Zoo_In_Gloo
 
     public abstract class Animal
     {
-        private const int MaxRandomChance = 4;
-        private const int MinRandomChance = 2;
-
         public Animal(string type, string voice)
         {
-            IsMale = GetSex();
-            Name = GetRandomName();
+            IsMale = GenerateSex();
+            Name = GenerateRandomName();
             Sex = IsMale ? "Самец" : "Самка";
             Type = type;
             Voice = voice;
@@ -154,19 +164,19 @@ namespace Zoo_In_Gloo
             Console.WriteLine($"{Sex}: {Type} {Name} \nИздаёт звук: {Voice}\n");
         }
 
-        private bool GetSex()
+        private bool GenerateSex()
         {
-            return Number.GetRandom(MaxRandomChance) >= MinRandomChance;
+            int maleChance = 4;
+            int femaleChance = 2;
+            return UserUtility.GetRandomNumber(maleChance) >= femaleChance;
         }
 
-        private string GetRandomName()
+        private string GenerateRandomName()
         {
-            int index;
-            string[] MalesNames = { "Danya", "Dima", "Vova", "Victor", "Melman", "Jenya", "Igor" };
-            string[] FemalesNames = { "Alena", "Vika", "Katya", "Natasha", "Irina", "Elena", "Lisa" };
-            string[] names;
-            names = IsMale ? MalesNames : FemalesNames;
-            index = Number.GetRandom(names.Length);
+            string[] malesNames = { "Danya", "Dima", "Vova", "Victor", "Melman", "Jenya", "Igor" };
+            string[] femalesNames = { "Alena", "Vika", "Katya", "Natasha", "Irina", "Elena", "Lisa" };
+            string[] names = IsMale ? malesNames : femalesNames;
+            int index = UserUtility.GetRandomNumber(names.Length);
             return names[index];
         }
     }
